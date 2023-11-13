@@ -1,0 +1,19 @@
+/* All Styling for the application is done in this file.
+* The file is located in the src folder.
+* The file is divided into sections for each component.
+* The sections are separated by comments.
+ */
+
+/* Styling for the main application window */
+.root {
+    -fx-background-color: #f6f4f2;
+    -fx-font-family: "Segoe UI Light";
+}
+
+/* Styling for the Login window */
+.hello-world {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-border-color: #ff0000;
+}
