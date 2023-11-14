@@ -5,15 +5,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import io.github.cdimascio.dotenv.Dotenv;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,23 +30,10 @@ public class MainController {
     @FXML
     private CheckBox showPassword;
 
-    // Database connection from ENV
-    private Dotenv dotenv = Dotenv.load();
-    private Connection connection;
     private final HashMap<String, String> loginInfo = new HashMap<>();
     private final Encryptor encryptor = new Encryptor();
 
-    public MainController() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            String DB_URL = dotenv.get("DB_URL");
-            String DB_USER = dotenv.get("DB_USER");
-            String DB_PASSWORD = dotenv.get("DB_PASSWORD");
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        }
-    }
+    private final OnLimeDB databaseConnector = new OnLimeDB();
 
     @FXML
     void changeVisibility(ActionEvent event) {
@@ -69,7 +54,7 @@ public class MainController {
         String password = getPassword();
 
         String query = "SELECT password FROM users WHERE username = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = databaseConnector.getConnection().prepareStatement(query)) {
             preparedStatement.setString(1, username);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -93,7 +78,7 @@ public class MainController {
         String password = getPassword();
 
         String query = "INSERT INTO users (username, password) VALUES (?, ?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (PreparedStatement preparedStatement = databaseConnector.getConnection().prepareStatement(query)) {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, encryptor.encryptString(password));
 
@@ -111,12 +96,6 @@ public class MainController {
 
     // Close the database connection when the application is closed
     public void closeConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        databaseConnector.closeConnection();
     }
 }
