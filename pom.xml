@@ -7,7 +7,7 @@
     <groupId>com.davincecode</groupId>
     <artifactId>onLimeChatter</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>loms21</name>
+    <name>onlime</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,6 +43,16 @@
             <artifactId>javafx-graphics</artifactId>
             <version>20.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>java-dotenv</artifactId>
+            <version>5.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -65,7 +75,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.davincecode.loms21/com.davincecode.onlime.HelloApplication</mainClass>
+                            <mainClass>com.davincecode.onlime/com.davincecode.onlime.MainApplication</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

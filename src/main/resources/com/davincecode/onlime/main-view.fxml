@@ -12,7 +12,6 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.davincecode.onlime.MainController">
-   <children>
       <VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" styleClass="login-scene-bg">
          <Label contentDisplay="CENTER" styleClass="login-title" stylesheets="@styles.css" text="WELCOME TO OFFLIME CHATTER" textAlignment="CENTER" textFill="WHITE">
             <font>
@@ -20,7 +19,7 @@
             </font>
          </Label>
             <VBox maxWidth="240" spacing="20">
-                  <TextField fx:id="errorField" alignment="CENTER_RIGHT" editable="false" style="-fx-background-color: #ffc1bd; -fx-border-width: 2; -fx-border-style: solid; -fx-border-color: #e60000; -fx-border-radius: 4; -fx-alignment: center-left;" text="ERROR" visible="false">
+                  <TextField fx:id="errorField" alignment="CENTER_RIGHT" editable="false" style="-fx-background-color: #ffc1bd; -fx-border-width: 2; -fx-border-style: solid; -fx-border-color: #e60000; -fx-border-radius: 4; -fx-alignment: center-left;" text="Username is not registered!" visible="false">
                         <font>
                               <Font name="System Bold" size="12.0" />
                         </font>
@@ -39,5 +38,4 @@
                   <Button mnemonicParsing="false" onAction="#createAccount" prefHeight="25.0" prefWidth="254.0" text="Create Account" />
             </VBox>
       </VBox>
-   </children>
 </AnchorPane>
