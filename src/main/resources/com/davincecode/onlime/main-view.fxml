@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davincecode.onlime.MainController">
+<AnchorPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.davincecode.onlime.MainController">
    <children>
       <VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" styleClass="login-scene-bg">
          <Label contentDisplay="CENTER" styleClass="login-title" stylesheets="@styles.css" text="WELCOME TO OFFLIME CHATTER" textAlignment="CENTER" textFill="WHITE">
