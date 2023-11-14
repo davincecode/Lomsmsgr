@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -49,11 +50,19 @@ public class MainController {
             String DB_USER = dotenv.get("DB_USER");
             String DB_PASSWORD = dotenv.get("DB_PASSWORD");
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+            // Add event handlers for clearing error label
+            initializeEventHandlers();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
 
+    // Add event handlers to clear the error label when the user interacts with the text fields
+    private void initializeEventHandlers() {
+        usernameTextField.setOnKeyTyped(event -> clearErrorLabel());
+        passwordTextField.setOnKeyTyped(event -> clearErrorLabel());
+    }
     @FXML
     void changeVisibility(ActionEvent event) {
         if (showPassword.isSelected()) {
@@ -62,10 +71,14 @@ public class MainController {
             hiddenPasswordTextField.setVisible(false);
             return;
         }
+
         hiddenPasswordTextField.setText(passwordTextField.getText());
         hiddenPasswordTextField.setVisible(true);
         passwordTextField.setVisible(false);
     }
+
+    @FXML
+    private Label errorLabel;
 
     @FXML
     void loginHandler(ActionEvent event) throws Exception {
@@ -87,14 +100,29 @@ public class MainController {
                         // Set the scene to the dashboard
                         stage.setScene(new Scene(dashboard));
                     } else {
+                        // Set the text of the notification label
+                        errorLabel.setText("Invalid Password!");
                         errorField.setVisible(true);
                     }
                 } else {
+                    // Set the text of the notification label
+                    errorLabel.setText("Invalid Username!");
                     errorField.setVisible(true);
                 }
             }
         }
+
+        // Clear the error label when the user attempts to log in
+        clearErrorLabel();
     }
+
+    private void clearErrorLabel() {
+        errorLabel.setText("");
+        errorField.setVisible(false);
+    }
+
+    @FXML
+    private Label notificationLabel;
 
     @FXML
     void createAccount(ActionEvent event) throws SQLException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
@@ -107,6 +135,7 @@ public class MainController {
             preparedStatement.setString(2, encryptor.encryptString(password));
 
             preparedStatement.executeUpdate();
+            notificationLabel.setText("Thank you for registering!");
         }
     }
 

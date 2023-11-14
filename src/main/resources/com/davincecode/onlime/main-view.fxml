@@ -11,31 +11,32 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.davincecode.onlime.MainController">
-      <VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" styleClass="login-scene-bg">
-         <Label contentDisplay="CENTER" styleClass="login-title" stylesheets="@styles.css" text="WELCOME TO OFFLIME CHATTER" textAlignment="CENTER" textFill="WHITE">
+<AnchorPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davincecode.onlime.MainController">
+    <VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" styleClass="login-scene-bg">
+        <Label contentDisplay="CENTER" styleClass="login-title" stylesheets="@styles.css" text="WELCOME TO OFFLIME CHATTER" textAlignment="CENTER" textFill="WHITE">
             <font>
-               <Font name="Sama Gurmukhi SemiBold" size="20.0" />
+                <Font name="Arial" size="20.0" />
             </font>
-         </Label>
-            <VBox maxWidth="240" spacing="20">
-                  <TextField fx:id="errorField" alignment="CENTER_RIGHT" editable="false" style="-fx-background-color: #ffc1bd; -fx-border-width: 2; -fx-border-style: solid; -fx-border-color: #e60000; -fx-border-radius: 4; -fx-alignment: center-left;" text="Username is not registered!" visible="false">
-                        <font>
-                              <Font name="System Bold" size="12.0" />
-                        </font>
-            </TextField>
-                  <TextField fx:id="usernameTextField" promptText="username" />
-                  <StackPane prefHeight="0.0" prefWidth="240.0">
-                        <TextField fx:id="passwordTextField" promptText="password" visible="false" />
-                        <PasswordField fx:id="hiddenPasswordTextField" promptText="password" />
-                        <CheckBox fx:id="showPassword" mnemonicParsing="false" onAction="#changeVisibility" StackPane.alignment="CENTER_RIGHT">
-                              <StackPane.margin>
-                                    <Insets right="5.0" />
-                              </StackPane.margin>
-                        </CheckBox>
-                  </StackPane>
-                  <Button onAction="#loginHandler" prefWidth="240" text="login" />
-                  <Button mnemonicParsing="false" onAction="#createAccount" prefHeight="25.0" prefWidth="254.0" text="Create Account" />
-            </VBox>
-      </VBox>
+        </Label>
+        <VBox alignment="CENTER" maxWidth="240" spacing="20">
+            <TextField fx:id="usernameTextField" promptText="username" />
+            <StackPane prefHeight="0.0" prefWidth="240.0">
+                <TextField fx:id="passwordTextField" promptText="password" visible="false" />
+                <PasswordField fx:id="hiddenPasswordTextField" promptText="password" />
+                <CheckBox fx:id="showPassword" mnemonicParsing="false" onAction="#changeVisibility" StackPane.alignment="CENTER_RIGHT">
+                    <StackPane.margin>
+                        <Insets right="5.0" />
+                    </StackPane.margin>
+                </CheckBox>
+            </StackPane>
+            <Button onAction="#loginHandler" prefWidth="240" text="login" />
+            <Button mnemonicParsing="false" onAction="#createAccount" prefHeight="25.0" prefWidth="254.0" text="Create Account" />
+
+            <!-- Error Label for specific errors -->
+            <Label fx:id="errorLabel" style="-fx-text-fill: red;" text="" />
+
+            <!-- Notification Label for Success -->
+            <Label fx:id="notificationLabel" style="-fx-text-fill: green;" text="" />
+        </VBox>
+    </VBox>
 </AnchorPane>
