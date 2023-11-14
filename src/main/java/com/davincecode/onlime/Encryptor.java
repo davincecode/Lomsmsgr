@@ -23,20 +23,19 @@ public class Encryptor {
     public static void main(String[] args) throws NoSuchAlgorithmException {
         Encryptor encryptor = new Encryptor();
 
-        String password = "monkey123";
+        String password = "davincecode";
         String hashedPas = "cc25c0f861a83f5efadc6e1ba9d1269e";
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Hey! Plz input your Password: \n");
+        System.out.println("Please enter your Password: \n");
 
         String userInput = scanner.nextLine();
 
         if(encryptor.encryptString(userInput).equals(hashedPas)){
-            System.out.println("Correct! You are in!");
+            System.out.println("Password Accepted!");
         } else{
-            System.out.println("Wrong!!");
+            System.out.println("Password Rejected!");
         }
-
     }
 }
