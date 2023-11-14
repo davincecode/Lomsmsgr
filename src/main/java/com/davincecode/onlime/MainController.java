@@ -1,10 +1,16 @@
 package com.davincecode.onlime;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -12,9 +18,7 @@ import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashMap;
 
 public class MainController {
@@ -32,8 +36,23 @@ public class MainController {
 
     private final HashMap<String, String> loginInfo = new HashMap<>();
     private final Encryptor encryptor = new Encryptor();
-
     private final OnLimeDB databaseConnector = new OnLimeDB();
+
+    // Database connection from ENV
+    private Dotenv dotenv = Dotenv.load();
+    private Connection connection;
+
+    public MainController() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String DB_URL = dotenv.get("DB_URL");
+            String DB_USER = dotenv.get("DB_USER");
+            String DB_PASSWORD = dotenv.get("DB_PASSWORD");
+            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @FXML
     void changeVisibility(ActionEvent event) {
@@ -49,7 +68,7 @@ public class MainController {
     }
 
     @FXML
-    void loginHandler(ActionEvent event) throws SQLException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+    void loginHandler(ActionEvent event) throws Exception {
         String username = usernameTextField.getText();
         String password = getPassword();
 
@@ -61,7 +80,12 @@ public class MainController {
                 if (resultSet.next()) {
                     String dbPassword = resultSet.getString("password");
                     if (encryptor.encryptString(password).equals(dbPassword)) {
-                        System.out.println("Successfully login!");
+                        // Load the dashboard
+                        Parent dashboard = FXMLLoader.load(getClass().getResource("dashboard.fxml"));
+                        // Get the current stage
+                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        // Set the scene to the dashboard
+                        stage.setScene(new Scene(dashboard));
                     } else {
                         errorField.setVisible(true);
                     }
