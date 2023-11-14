@@ -11,9 +11,14 @@
 }
 
 /* Styling for the Login window */
-.hello-world {
+.login-scene-bg {
+    -fx-background-color: #bb7fc9;
+    -fx-alignment: center;
+}
+
+.login-title {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
-    -fx-text-fill: #000000;
-    -fx-border-color: #ff0000;
+    -fx-text-fill: #f6f4f2;
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.5) , 0,0,0,1 );
 }
