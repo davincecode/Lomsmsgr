@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-
+import io.github.cdimascio.dotenv.Dotenv;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -32,19 +32,20 @@ public class MainController {
     @FXML
     private CheckBox showPassword;
 
-    // Database connection parameters
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/onlime_chatter";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "Pl163017!";
-
+    // Database connection from ENV
+    private Dotenv dotenv = Dotenv.load();
     private Connection connection;
-    private HashMap<String, String> loginInfo = new HashMap<>();
-    private Encryptor encryptor = new Encryptor();
+    private final HashMap<String, String> loginInfo = new HashMap<>();
+    private final Encryptor encryptor = new Encryptor();
 
     public MainController() {
         try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String DB_URL = dotenv.get("DB_URL");
+            String DB_USER = dotenv.get("DB_USER");
+            String DB_PASSWORD = dotenv.get("DB_PASSWORD");
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
