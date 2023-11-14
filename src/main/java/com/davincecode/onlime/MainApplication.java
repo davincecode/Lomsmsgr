@@ -6,6 +6,17 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
+/**
+ *
+ * Author Vincent Ybanez;
+ * StudentID: 239445310;
+ * Subject: COSC3406 - SE;
+ * Created: November 14, 2023;
+ *
+ */
+
 public class MainApplication extends Application {
 
     private MainController mainController;
@@ -14,8 +25,8 @@ public class MainApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
         mainController = new MainController();
 
-        Parent root = FXMLLoader.load(getClass().getResource("main-view.fxml"));
-        String css = getClass().getResource("styles.css").toExternalForm();
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("main-view.fxml")));
+        String css = Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm();
         root.getStylesheets().add(css);
 
         primaryStage.setTitle("OnLime Chatter");
@@ -24,7 +35,7 @@ public class MainApplication extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         mainController.closeConnection();
     }
 
