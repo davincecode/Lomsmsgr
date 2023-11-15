@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -28,7 +29,7 @@ public class MainController {
     @FXML
     public TextField passwordTextField;
     @FXML
-    public TextField errorField;
+    private Label notificationLabel; // Add this line for the notification label
     @FXML
     private PasswordField hiddenPasswordTextField;
     @FXML
@@ -87,10 +88,10 @@ public class MainController {
                         // Set the scene to the dashboard
                         stage.setScene(new Scene(dashboard));
                     } else {
-                        errorField.setVisible(true);
+                        showNotification("Invalid credentials. Please try again.", true);
                     }
                 } else {
-                    errorField.setVisible(true);
+                    showNotification("Invalid credentials. Please try again.", true);
                 }
             }
         }
@@ -107,8 +108,12 @@ public class MainController {
             preparedStatement.setString(2, encryptor.encryptString(password));
 
             preparedStatement.executeUpdate();
+
+            // Always show notification after creating a user
+            showNotification("User has been registered.", false);
         }
     }
+
 
     private String getPassword() {
         if (passwordTextField.isVisible()) {
@@ -116,6 +121,19 @@ public class MainController {
         } else {
             return hiddenPasswordTextField.getText();
         }
+    }
+
+    @FXML
+    void showNotification(String message, boolean isError) {
+        notificationLabel.setText(message);
+
+        if (isError) {
+            notificationLabel.setStyle("-fx-text-fill: red; -fx-alignment: center;");
+        } else {
+            notificationLabel.setStyle("-fx-text-fill: green; -fx-alignment: center");
+        }
+
+        notificationLabel.setVisible(true);
     }
 
     // Close the database connection when the application is closed
