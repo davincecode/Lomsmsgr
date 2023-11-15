@@ -25,7 +25,7 @@ public class MainApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
         mainController = new MainController();
 
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("main-view.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("LoginScreen.fxml")));
         String css = Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm();
         root.getStylesheets().add(css);
 

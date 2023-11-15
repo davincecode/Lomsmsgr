@@ -29,7 +29,7 @@ public class MainController {
     @FXML
     public TextField passwordTextField;
     @FXML
-    private Label notificationLabel; // Add this line for the notification label
+    private Label notificationLabel;
     @FXML
     private PasswordField hiddenPasswordTextField;
     @FXML
@@ -82,11 +82,11 @@ public class MainController {
                     String dbPassword = resultSet.getString("password");
                     if (encryptor.encryptString(password).equals(dbPassword)) {
                         // Load the dashboard
-                        Parent dashboard = FXMLLoader.load(getClass().getResource("dashboard.fxml"));
+                        Parent mainScreen = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
                         // Get the current stage
                         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         // Set the scene to the dashboard
-                        stage.setScene(new Scene(dashboard));
+                        stage.setScene(new Scene(mainScreen));
                     } else {
                         showNotification("Invalid credentials. Please try again.", true);
                     }
