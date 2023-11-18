@@ -8,15 +8,6 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
-/**
- *
- * Author Vincent Ybanez;
- * StudentID: 239445310;
- * Subject: COSC3406 - SE;
- * Created: November 14, 2023;
- *
- */
-
 public class MainApplication extends Application {
 
     private MainController mainController;
