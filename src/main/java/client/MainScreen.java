@@ -1,5 +1,6 @@
-package com.davincecode.onlime;
+package client;
 
+import database.OnLimeDB;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;

@@ -1,5 +1,6 @@
-package com.davincecode.onlime;
+package client;
 
+import controller.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,8 +17,8 @@ public class MainApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
         mainController = new MainController();
 
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("LoginScreen.fxml")));
-        String css = Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm();
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/views/LoginScreen.fxml")));
+        String css = Objects.requireNonNull(getClass().getResource("/views/styles.css")).toExternalForm();
         root.getStylesheets().add(css);
 
         primaryStage.setTitle("OnLime Chatter");

@@ -1,5 +1,6 @@
-package com.davincecode.onlime;
+package controller;
 
+import database.OnLimeDB;
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -83,7 +84,7 @@ public class MainController {
                     String dbPassword = resultSet.getString("password");
                     if (encryptor.encryptString(password).equals(dbPassword)) {
                         // Load the dashboard
-                        Parent mainScreen = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+                        Parent mainScreen = FXMLLoader.load(getClass().getResource("/views/MainScreen.fxml"));
                         // Get the current stage
                         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         // Set the scene to the dashboard
