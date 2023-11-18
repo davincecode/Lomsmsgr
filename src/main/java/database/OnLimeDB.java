@@ -1,4 +1,4 @@
-package com.davincecode.onlime;
+package database;
 
 import io.github.cdimascio.dotenv.Dotenv;
 

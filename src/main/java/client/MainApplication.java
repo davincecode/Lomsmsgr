@@ -1,5 +1,6 @@
-package com.davincecode.onlime;
+package client;
 
+import controller.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,15 +8,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.util.Objects;
-
-/**
- *
- * Author Vincent Ybanez;
- * StudentID: 239445310;
- * Subject: COSC3406 - SE;
- * Created: November 14, 2023;
- *
- */
 
 public class MainApplication extends Application {
 
@@ -25,8 +17,8 @@ public class MainApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
         mainController = new MainController();
 
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("main-view.fxml")));
-        String css = Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm();
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/views/LoginScreen.fxml")));
+        String css = Objects.requireNonNull(getClass().getResource("/views/styles.css")).toExternalForm();
         root.getStylesheets().add(css);
 
         primaryStage.setTitle("OnLime Chatter");

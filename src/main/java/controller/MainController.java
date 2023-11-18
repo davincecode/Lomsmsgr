@@ -1,5 +1,6 @@
-package com.davincecode.onlime;
+package controller;
 
+import database.OnLimeDB;
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,6 +22,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainController {
 
@@ -29,7 +31,7 @@ public class MainController {
     @FXML
     public TextField passwordTextField;
     @FXML
-    private Label notificationLabel; // Add this line for the notification label
+    private Label notificationLabel;
     @FXML
     private PasswordField hiddenPasswordTextField;
     @FXML
@@ -82,11 +84,11 @@ public class MainController {
                     String dbPassword = resultSet.getString("password");
                     if (encryptor.encryptString(password).equals(dbPassword)) {
                         // Load the dashboard
-                        Parent dashboard = FXMLLoader.load(getClass().getResource("dashboard.fxml"));
+                        Parent mainScreen = FXMLLoader.load(getClass().getResource("/views/MainScreen.fxml"));
                         // Get the current stage
                         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         // Set the scene to the dashboard
-                        stage.setScene(new Scene(dashboard));
+                        stage.setScene(new Scene(mainScreen));
                     } else {
                         showNotification("Invalid credentials. Please try again.", true);
                     }
@@ -99,21 +101,73 @@ public class MainController {
 
     @FXML
     void createAccount(ActionEvent event) throws SQLException, NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-        String username = usernameTextField.getText();
-        String password = getPassword();
+            String username = usernameTextField.getText();
+            String password = getPassword();
 
-        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
+            String query = "INSERT INTO users (username, password) VALUES (?, ?)";
+            try (PreparedStatement preparedStatement = databaseConnector.getConnection().prepareStatement(query)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, encryptor.encryptString(password));
+
+                preparedStatement.executeUpdate();
+
+                // Always show notification after creating a user
+                showNotification("User has been registered.", false);
+            }
+    }
+
+    @FXML
+    void sendMessage(ActionEvent event) throws SQLException {
+        // Implement the logic to send a message
+        String recipient = "recipient_username"; // Replace with the actual recipient
+        String messageContent = "Hello, this is a test message."; // Replace with the actual message content
+
+        String query = "INSERT INTO messages (sender, receiver, content) VALUES (?, ?, ?)";
         try (PreparedStatement preparedStatement = databaseConnector.getConnection().prepareStatement(query)) {
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, encryptor.encryptString(password));
+            preparedStatement.setString(1, getUsername());
+            preparedStatement.setString(2, recipient);
+            preparedStatement.setString(3, messageContent);
 
             preparedStatement.executeUpdate();
 
-            // Always show notification after creating a user
-            showNotification("User has been registered.", false);
+            showNotification("Message sent successfully.", false);
         }
     }
 
+    @FXML
+    void retrieveMessages(ActionEvent event) throws SQLException {
+        // Implement the logic to retrieve messages
+        String query = "SELECT sender, content FROM messages WHERE receiver = ?";
+        try (PreparedStatement preparedStatement = databaseConnector.getConnection().prepareStatement(query)) {
+            preparedStatement.setString(1, getUsername());
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    String sender = resultSet.getString("sender");
+                    String content = resultSet.getString("content");
+
+                    System.out.println("Message from " + sender + ": " + content);
+                }
+            }
+        }
+    }
+
+    @FXML
+    void markAsRead(ActionEvent event) throws SQLException {
+        // Implement the logic to mark messages as read
+        String query = "UPDATE messages SET status = 'read' WHERE receiver = ?";
+        try (PreparedStatement preparedStatement = databaseConnector.getConnection().prepareStatement(query)) {
+            preparedStatement.setString(1, getUsername());
+
+            preparedStatement.executeUpdate();
+
+            showNotification("Messages marked as read.", false);
+        }
+    }
+
+    private String getUsername() {
+        return usernameTextField.getText();
+    }
 
     private String getPassword() {
         if (passwordTextField.isVisible()) {
