@@ -1,6 +1,6 @@
 package client;
 
-import controller.MainController;
+import controller.ClientController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,11 +11,11 @@ import java.util.Objects;
 
 public class ClientLauncher extends Application {
 
-    private MainController mainController;
+    private ClientController mainController;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        mainController = new MainController();
+        mainController = new ClientController();
 
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/views/LoginScreen.fxml")));
         String css = Objects.requireNonNull(getClass().getResource("/views/styles.css")).toExternalForm();

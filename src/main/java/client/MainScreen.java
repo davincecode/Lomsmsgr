@@ -65,18 +65,18 @@ public class MainScreen {
         }
     }
 
-//    private void insertMessageIntoDatabase(int senderId, int receiverId, String content) {
-//        try (Connection connection = databaseConnector.getConnection();
-//             PreparedStatement preparedStatement = connection.prepareStatement(
-//                     "INSERT INTO messages (sender_id, receiver_id, content) VALUES (?, ?, ?)")) {
-//            preparedStatement.setInt(1, senderId);
-//            preparedStatement.setInt(2, receiverId);
-//            preparedStatement.setString(3, content);
-//
-//            // Execute the insert statement
-//            preparedStatement.executeUpdate();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private void insertMessageIntoDatabase(int senderId, int receiverId, String content) {
+        try (Connection connection = databaseConnector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "INSERT INTO messages (sender_id, receiver_id, content) VALUES (?, ?, ?)")) {
+            preparedStatement.setInt(1, senderId);
+            preparedStatement.setInt(2, receiverId);
+            preparedStatement.setString(3, content);
+
+            // Execute the insert statement
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

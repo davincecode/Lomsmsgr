@@ -2,11 +2,11 @@ module OnLimeChatter {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires com.google.protobuf;
     requires java.desktop;
+    requires javafx.graphics;
     requires java.dotenv;
 
-    opens controller to javafx.fxml;
-    opens client to javafx.fxml;
-
-    exports client;
+    exports server;
+    exports controller;
 }

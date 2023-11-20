@@ -12,31 +12,74 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="ap_main" fx:controller="controller.MainController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="680.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="ap_main" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ClientController">
    <children>
       <Label layoutX="307.0" layoutY="14.0" text="O F F L I M E" />
-      <ScrollPane fx:id="sp_user_list" layoutX="14.0" layoutY="38.0" prefHeight="329.0" prefWidth="216.0" />
-       <ScrollPane fx:id="sp_main" layoutX="244.0" layoutY="38.0" prefHeight="329.0" prefWidth="422.0">
+      <ScrollPane fx:id="sp_user_list" layoutX="80.0" layoutY="38.0" prefHeight="329.0" prefWidth="216.0" />
+       <ScrollPane fx:id="sp_main" layoutX="309.0" layoutY="38.0" prefHeight="329.0" prefWidth="481.0">
            <content>
-                   <VBox fx:id="vb_messages" prefHeight="325.0" prefWidth="415.0" />
+                   <VBox fx:id="vb_messages" prefHeight="325.0" prefWidth="478.0" />
            </content>
        </ScrollPane>
-      <TextField fx:id="tf_message" layoutX="244.0" layoutY="379.0" onAction="#txtMsgOnAction" prefHeight="57.0" prefWidth="342.0" />
-      <Button fx:id="button_send" layoutX="597.0" layoutY="379.0" mnemonicParsing="false" onAction="#sendButtonOnAction" text="Send">
+      <TextField fx:id="tf_message" layoutX="309.0" layoutY="379.0" onAction="#txtMsgOnAction" prefHeight="57.0" prefWidth="401.0" />
+      <Button fx:id="button_send" layoutX="721.0" layoutY="379.0" mnemonicParsing="false" onAction="#sendButtonOnAction" text="Send">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
       </Button>
-      <Text fx:id="txtLabel" layoutX="79.0" layoutY="401.0" text="Username">
+      <Text fx:id="txtLabel" layoutX="144.0" layoutY="403.0" text="Username">
          <font>
-            <Font name="System Bold" size="14.0" />
+            <Font name="System Bold" size="16.0" />
          </font>
       </Text>
-      <Label layoutX="79.0" layoutY="410.0" text="Status" />
-      <ImageView fitHeight="57.0" fitWidth="61.0" layoutX="13.0" layoutY="379.0" pickOnBounds="true" preserveRatio="true">
+      <Label layoutX="145.0" layoutY="406.0" text="Status">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+      <ImageView fitHeight="47.0" fitWidth="57.0" layoutX="86.0" layoutY="381.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../../zip_installers/user_icon.png" />
+            <Image url="@../img/user.png" />
          </image>
       </ImageView>
+      <ImageView fitHeight="57.0" fitWidth="61.0" layoutX="14.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/group.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="21.0" layoutY="97.0" text="Online">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="57.0" fitWidth="61.0" layoutX="14.0" layoutY="122.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/group.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="20.0" layoutY="177.0" text="Groups">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <ImageView fx:id="userIcon" onMouseClicked="#addUserOnAction" fitHeight="57.0" fitWidth="61.0" layoutX="14.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/add-user.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="12.0" layoutY="263.0" text="Add User">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="57.0" fitWidth="61.0" layoutX="13.0" layoutY="292.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/settings.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="17.0" layoutY="352.0" text="Settings">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
