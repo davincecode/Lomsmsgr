@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
-public class MainApplication extends Application {
+public class ClientLauncher extends Application {
 
     private MainController mainController;
 

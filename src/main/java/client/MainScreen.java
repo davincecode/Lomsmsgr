@@ -27,20 +27,20 @@ public class MainScreen {
         loadMessagesFromDatabase();
     }
 
-    @FXML
-    void sendMessage() {
-        // Get the typed message from the TextField
-        String newMessage = messageTextField.getText();
-
-        // Display the new message in the ListView
-        messageListView.getItems().add("You: " + newMessage);
-
-        // Insert the new message into the database
-        insertMessageIntoDatabase(senderUserId, receiverUserId, newMessage);
-
-        // Clear the TextField after sending the message
-        messageTextField.clear();
-    }
+//    @FXML
+//    void sendMessage() {
+//        // Get the typed message from the TextField
+//        String newMessage = messageTextField.getText();
+//
+//        // Display the new message in the ListView
+//        messageListView.getItems().add("You: " + newMessage);
+//
+//        // Insert the new message into the database
+//        insertMessageIntoDatabase(senderUserId, receiverUserId, newMessage);
+//
+//        // Clear the TextField after sending the message
+//        messageTextField.clear();
+//    }
 
     private void loadMessagesFromDatabase() {
         try (Connection connection = databaseConnector.getConnection();
@@ -65,18 +65,18 @@ public class MainScreen {
         }
     }
 
-    private void insertMessageIntoDatabase(int senderId, int receiverId, String content) {
-        try (Connection connection = databaseConnector.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     "INSERT INTO messages (sender_id, receiver_id, content) VALUES (?, ?, ?)")) {
-            preparedStatement.setInt(1, senderId);
-            preparedStatement.setInt(2, receiverId);
-            preparedStatement.setString(3, content);
-
-            // Execute the insert statement
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void insertMessageIntoDatabase(int senderId, int receiverId, String content) {
+//        try (Connection connection = databaseConnector.getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(
+//                     "INSERT INTO messages (sender_id, receiver_id, content) VALUES (?, ?, ?)")) {
+//            preparedStatement.setInt(1, senderId);
+//            preparedStatement.setInt(2, receiverId);
+//            preparedStatement.setString(3, content);
+//
+//            // Execute the insert statement
+//            preparedStatement.executeUpdate();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
