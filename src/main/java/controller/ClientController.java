@@ -60,9 +60,11 @@ public class ClientController {
     public void initialize() {
         txtLabel.setText(clientName);
 
-        // Update the username when the application loads
+/*
+        Update the username when the application loads
         String username = getUsername();
         setClientUsername(username);
+*/
 
 
         new Thread(() -> {
@@ -92,8 +94,9 @@ public class ClientController {
         vb_messages.heightProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) -> sp_main.setVvalue((Double) newValue));
     }
 
-    public void setClientUsername(String username) {
-        txtLabel.setText(username);
+    public void setClientName(String username) {
+        this.clientName = username;
+        txtLabel.setText(clientName);
     }
 
     public void txtMsgOnAction(ActionEvent actionEvent) {
@@ -205,7 +208,7 @@ public class ClientController {
         ClientController mainScreenController = loader.getController();
 
         // Pass the username to the MainScreenController
-        mainScreenController.setClientUsername(getUsername());
+        mainScreenController.setClientName(getUsername());
 
         Stage stage = new Stage();
         stage.initModality(Modality.WINDOW_MODAL);

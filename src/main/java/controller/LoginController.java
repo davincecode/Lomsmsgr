@@ -72,7 +72,7 @@ public class LoginController {
                     String dbPassword = resultSet.getString("password");
                     if (encryptor.encryptString(password).equals(dbPassword)) {
                         // Load the dashboard
-                        loadMainScreen(event);
+                        loadMainScreen(event, username);
                         System.out.println("Login successful.");
                     } else {
                         showNotification("Invalid credentials. Please try again.", true);
@@ -104,9 +104,14 @@ public class LoginController {
     }
 
     @FXML
-    void loadMainScreen(ActionEvent event) throws IOException {
+    void loadMainScreen(ActionEvent event, String username) throws IOException {
         // Load the dashboard
-        Parent mainScreen = FXMLLoader.load(getClass().getResource("/views/MainScreen.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/MainScreen.fxml"));
+        Parent mainScreen = loader.load();
+        // Get the controller
+        ClientController controller = loader.getController();
+        // Set the client name
+        controller.setClientName(username);
         // Get the current stage
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         // Set the scene to the dashboard
