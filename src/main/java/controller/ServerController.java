@@ -80,21 +80,25 @@ public class ServerController {
     }
 
     public static void receiveMessage(String msgFromClient){
-        HBox hBox = new HBox();
-        hBox.setAlignment(Pos.CENTER_LEFT);
-        hBox.setPadding(new Insets(5,5,5,10));
+        if (staticVBox != null) {
+            HBox hBox = new HBox();
+            hBox.setAlignment(Pos.CENTER_LEFT);
+            hBox.setPadding(new Insets(5, 5, 5, 10));
 
-        Text text = new Text(msgFromClient);
-        TextFlow textFlow = new TextFlow(text);
-        textFlow.setStyle("-fx-background-color: #abb8c3; -fx-font-weight: bold; -fx-background-radius: 20px");
-        textFlow.setPadding(new Insets(5,10,5,10));
-        text.setFill(Color.color(0,0,0));
+            Text text = new Text(msgFromClient);
+            TextFlow textFlow = new TextFlow(text);
+            textFlow.setStyle("-fx-background-color: #abb8c3; -fx-font-weight: bold; -fx-background-radius: 20px");
+            textFlow.setPadding(new Insets(5, 10, 5, 10));
+            text.setFill(Color.color(0, 0, 0));
 
-        hBox.getChildren().add(textFlow);
+            hBox.getChildren().add(textFlow);
 
-        Platform.runLater(() -> {
-            staticVBox.getChildren().add(hBox);
-        });
+            Platform.runLater(() -> {
+                staticVBox.getChildren().add(hBox);
+            });
+        } else {
+            System.out.println("staticVBox is null");
+        }
     }
 
 }

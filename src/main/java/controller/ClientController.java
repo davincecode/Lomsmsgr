@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -24,6 +25,7 @@ import javafx.stage.Stage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.PreparedStatement;
@@ -55,11 +57,13 @@ public class ClientController {
     private DataOutputStream dataOutputStream;
     private String clientName = "Username";
 
-    public ClientController() {
-    }
-
     public void initialize() {
         txtLabel.setText(clientName);
+
+        // Update the username when the application loads
+        String username = getUsername();
+        setClientUsername(username);
+
 
         new Thread(() -> {
             try {
@@ -70,8 +74,15 @@ public class ClientController {
                 ServerController.receiveMessage(clientName + " joined.");
 
                 while (socket.isConnected()) {
-                    String receivingMsg = dataInputStream.readUTF();
-                    receiveMessage(receivingMsg, vb_messages);
+                    try {
+                        String receivingMsg = dataInputStream.readUTF();
+                        receiveMessage(receivingMsg, vb_messages);
+                    } catch (EOFException e) {
+                        System.out.println("Client disconnected");
+                        break;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -81,12 +92,12 @@ public class ClientController {
         vb_messages.heightProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) -> sp_main.setVvalue((Double) newValue));
     }
 
-    public void txtMsgOnAction(ActionEvent actionEvent) {
-        sendButtonOnAction(actionEvent);
+    public void setClientUsername(String username) {
+        txtLabel.setText(username);
     }
 
-    public void usernameUpdate(ActionEvent actionEventEvent) {
-        System.out.println("Username update clicked");
+    public void txtMsgOnAction(ActionEvent actionEvent) {
+        sendButtonOnAction(actionEvent);
     }
 
     public void sendButtonOnAction(ActionEvent actionEvent) {
@@ -139,8 +150,7 @@ public class ClientController {
         return hBoxTime;
     }
 
-    @FXML
-    void receiveMessage(String message, VBox vb_messages) {
+    public void receiveMessage(String message, VBox vb_messages) {
         Platform.runLater(() -> {
             String[] messageArray = message.split("-");
             String sender = messageArray[0];
@@ -151,8 +161,7 @@ public class ClientController {
         });
     }
 
-    @FXML
-    void retrieveMessages(ActionEvent event) throws SQLException {
+    public void retrieveMessages(ActionEvent event) throws SQLException {
         String query = "SELECT sender, content FROM messages WHERE receiver = ?";
         try (PreparedStatement preparedStatement = databaseConnector.getConnection().prepareStatement(query)) {
             preparedStatement.setString(1, getUsername());
@@ -168,8 +177,7 @@ public class ClientController {
         }
     }
 
-    @FXML
-    void markAsRead(ActionEvent event) throws SQLException {
+    public void markAsRead(ActionEvent event) throws SQLException {
         String query = "UPDATE messages SET status = 'read' WHERE receiver = ?";
         try (PreparedStatement preparedStatement = databaseConnector.getConnection().prepareStatement(query)) {
             preparedStatement.setString(1, getUsername());
@@ -183,24 +191,30 @@ public class ClientController {
         return txtLabel.getText();
     }
 
-
     public void closeConnection() {
         databaseConnector.closeConnection();
     }
 
-    public void setClientName(String name) {
-        clientName = name;
-    }
 
     @FXML
     private void addUserOnAction(MouseEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/MainScreen.fxml"));
+        Parent mainScreen = loader.load();
+
+        // Get the controller (which is assumed to be ClientController in MainScreen.fxml)
+        ClientController mainScreenController = loader.getController();
+
+        // Pass the username to the MainScreenController
+        mainScreenController.setClientUsername(getUsername());
+
         Stage stage = new Stage();
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(ap_main.getScene().getWindow());
-        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/MainScreen.fxml"))));
+        stage.setScene(new Scene(mainScreen));
         stage.setTitle("OffLime Chat");
         stage.centerOnScreen();
         stage.setResizable(false);
         stage.show();
     }
+
 }

@@ -27,20 +27,20 @@ public class MainScreen {
         loadMessagesFromDatabase();
     }
 
-//    @FXML
-//    void sendMessage() {
-//        // Get the typed message from the TextField
-//        String newMessage = messageTextField.getText();
-//
-//        // Display the new message in the ListView
-//        messageListView.getItems().add("You: " + newMessage);
-//
-//        // Insert the new message into the database
-//        insertMessageIntoDatabase(senderUserId, receiverUserId, newMessage);
-//
-//        // Clear the TextField after sending the message
-//        messageTextField.clear();
-//    }
+    @FXML
+    void sendMessage() {
+        // Get the typed message from the TextField
+        String newMessage = messageTextField.getText();
+
+        // Display the new message in the ListView
+        messageListView.getItems().add("You: " + newMessage);
+
+        // Insert the new message into the database
+        insertMessageIntoDatabase(senderUserId, receiverUserId, newMessage);
+
+        // Clear the TextField after sending the message
+        messageTextField.clear();
+    }
 
     private void loadMessagesFromDatabase() {
         try (Connection connection = databaseConnector.getConnection();

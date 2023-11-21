@@ -1,4 +1,4 @@
-module OnLimeChatter {
+module onLimeChatter {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
@@ -7,6 +7,11 @@ module OnLimeChatter {
     requires javafx.graphics;
     requires java.dotenv;
 
+    opens client;
+    opens server;
+    opens controller;
+
+    exports client;
     exports server;
     exports controller;
 }
