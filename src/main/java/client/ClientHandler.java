@@ -1,5 +1,7 @@
 package client;
 
+import controller.ServerController;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,7 +14,7 @@ public class ClientHandler {
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private String msg = "";
-    private String username = "DefaultUsername";  // Initial username
+    private String username = "DefaultUsername";
 
     public ClientHandler(Socket socket, List<ClientHandler> clients) {
         try {
@@ -31,6 +33,7 @@ public class ClientHandler {
             try {
                 while (socket.isConnected()) {
                     msg = dataInputStream.readUTF();
+                    System.out.println("Sent message: " + username + " joined.");
 
                     // Check if the received message is a username update
                     if (msg.startsWith("UPDATE_USERNAME:")) {
@@ -39,6 +42,12 @@ public class ClientHandler {
 
                         // Update the username and notify the client
                         updateUsername(newUsername);
+                    } else if (msg.endsWith(" joined.")) {
+                        // Extract the client name
+                        String username = msg.substring(0, msg.length() - " joined.".length());
+
+                        // Notify the server that the client has joined
+                        ServerController.receiveMessage(username + " joined.");
                     } else {
                         // Broadcast the message to other clients
                         broadcastMessage(msg);

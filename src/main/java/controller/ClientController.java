@@ -44,8 +44,7 @@ public class ClientController {
     @FXML
     private VBox vb_messages;
     @FXML
-    private TextField tf_message;
-
+    private TextField txtMsg;
     @FXML
     private Text txtLabel;
     private final HashMap<String, String> loginInfo = new HashMap<>();
@@ -60,20 +59,17 @@ public class ClientController {
     public void initialize() {
         txtLabel.setText(clientName);
 
-/*
-        Update the username when the application loads
-        String username = getUsername();
-        setClientUsername(username);
-*/
-
-
         new Thread(() -> {
             try {
-                socket = new Socket("localhost", 3306);
+                socket = new Socket("localhost", 3307);
                 dataInputStream = new DataInputStream(socket.getInputStream());
                 dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 System.out.println("Client connected");
-                ServerController.receiveMessage(clientName + " joined.");
+
+                // Send a message to the server indicating that the client has joined
+                dataOutputStream.writeUTF(clientName + " joined.");
+                dataOutputStream.flush();
+                System.out.println("Sent message: " + clientName + " joined.");
 
                 while (socket.isConnected()) {
                     try {
@@ -104,7 +100,7 @@ public class ClientController {
     }
 
     public void sendButtonOnAction(ActionEvent actionEvent) {
-        sendMsg(tf_message.getText());
+        sendMsg(txtMsg.getText());
     }
 
     private void sendMsg(String msgToSend) {
@@ -120,7 +116,7 @@ public class ClientController {
                 e.printStackTrace();
             }
 
-            tf_message.clear();
+            txtMsg.clear();
         }
     }
 
@@ -153,16 +149,34 @@ public class ClientController {
         return hBoxTime;
     }
 
-    public void receiveMessage(String message, VBox vb_messages) {
-        Platform.runLater(() -> {
-            String[] messageArray = message.split("-");
-            String sender = messageArray[0];
-            String content = messageArray[1];
+    public static void receiveMessage(String msg, VBox vb_messages) throws IOException {
+        String name = msg.split("-")[0];
+        String msgFromServer = msg.split("-")[1];
 
-            HBox hBox = createMessageHBox(content);
-            vb_messages.getChildren().addAll(hBox, createTimeHBox());
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        hBox.setPadding(new Insets(5, 5, 5, 10));
+
+        HBox hBoxName = new HBox();
+        hBoxName.setAlignment(Pos.CENTER_LEFT);
+        Text textName = new Text(name);
+        TextFlow textFlowName = new TextFlow(textName);
+        hBoxName.getChildren().add(textFlowName);
+
+        Text text = new Text(msgFromServer);
+        TextFlow textFlow = new TextFlow(text);
+        textFlow.setStyle("-fx-background-color: #abb8c3; -fx-font-weight: bold; -fx-background-radius: 20px");
+        textFlow.setPadding(new Insets(5, 10, 5, 10));
+        text.setFill(Color.color(0, 0, 0));
+
+        hBox.getChildren().add(textFlow);
+
+        Platform.runLater(() -> {
+            vb_messages.getChildren().add(hBoxName);
+            vb_messages.getChildren().add(hBox);
         });
     }
+
 
     public void retrieveMessages(ActionEvent event) throws SQLException {
         String query = "SELECT sender, content FROM messages WHERE receiver = ?";

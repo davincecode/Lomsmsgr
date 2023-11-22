@@ -3,8 +3,12 @@ package controller;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -12,6 +16,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import server.Server;
 
 import java.io.IOException;
@@ -19,7 +25,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class ServerController {
-    public AnchorPane ap_main;
+    public AnchorPane sp_main;
     public VBox vb_messages;
     public Text usernameUpdate;
     public ScrollPane sp_server;
@@ -80,6 +86,8 @@ public class ServerController {
     }
 
     public static void receiveMessage(String msgFromClient){
+        System.out.println("Received message: " + msgFromClient);
+
         if (staticVBox != null) {
             HBox hBox = new HBox();
             hBox.setAlignment(Pos.CENTER_LEFT);
@@ -101,4 +109,20 @@ public class ServerController {
         }
     }
 
+
+    public void addButtonOnAction(ActionEvent actionEvent) throws IOException {
+        Stage stage = new Stage();
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(sp_main.getScene().getWindow());
+        try {
+            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/views/LoginScreen.fxml"))));
+        } catch (IOException e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR,"something went wrong. can't add client").show();
+        }
+        stage.setTitle("onLimeChat");
+        stage.centerOnScreen();
+        stage.setResizable(false);
+        stage.show();
+    }
 }
