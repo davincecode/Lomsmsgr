@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -19,22 +20,28 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.URL;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ResourceBundle;
 
-public class ClientFormController {
+public class ClientFormController implements Initializable {
+    public Text txtLabel;
+    public Text txtLabel1;
     public AnchorPane pane;
     public ScrollPane scrollPain;
     public VBox vBox;
     public TextField txtMsg;
-    public Text txtLabel;
+
+
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private String clientName = "Client";
 
-    public void initialize(){
+    public void initialize(URL location, ResourceBundle resources) {
         txtLabel.setText(clientName);
+        txtLabel1.setText(clientName);
 
         new Thread(new Runnable() {
             @Override
@@ -152,4 +159,5 @@ public class ClientFormController {
     public void setClientName(String name) {
         clientName = name;
     }
+
 }

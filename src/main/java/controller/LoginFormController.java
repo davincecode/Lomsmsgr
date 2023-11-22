@@ -31,6 +31,9 @@ public class LoginFormController {
                 Stage primaryStage = new Stage();
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/ClientForm.fxml"));
 
+                ClientFormController controller = new ClientFormController();
+                controller.setClientName(usernameFromDB);
+                fxmlLoader.setController(controller);
 
                 primaryStage.setScene(new Scene(fxmlLoader.load()));
                 primaryStage.setTitle(usernameFromDB);
@@ -42,6 +45,9 @@ public class LoginFormController {
                     System.exit(0);
                 });
                 primaryStage.show();
+
+                // Close form on Login
+                ((Stage) txtName.getScene().getWindow()).close();
 
                 txtName.clear();
             } else {
