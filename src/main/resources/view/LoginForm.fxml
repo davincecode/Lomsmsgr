@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-
-<AnchorPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.LoginController">
+<AnchorPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.LoginFormController">
     <VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" styleClass="login-scene-bg">
         <Label contentDisplay="CENTER" styleClass="login-title" stylesheets="@styles.css" text="WELCOME TO OFFLIME CHATTER" textAlignment="CENTER" textFill="WHITE">
         </Label>
         <VBox maxWidth="240" spacing="20">
-            <TextField fx:id="usernameTextField" promptText="username" />
+            <TextField fx:id="txtName" promptText="username" />
             <StackPane prefHeight="0.0" prefWidth="240.0">
                 <TextField fx:id="passwordTextField" promptText="password" visible="false" />
-                <PasswordField fx:id="hiddenPasswordTextField" promptText="password" />
+                <PasswordField fx:id="txtPassword" promptText="password" />
                 <CheckBox fx:id="showPassword" mnemonicParsing="false" onAction="#changeVisibility" StackPane.alignment="CENTER_RIGHT">
                     <StackPane.margin>
                         <Insets right="5.0" />
                     </StackPane.margin>
                 </CheckBox>
             </StackPane>
-            <Button onAction="#loginHandler" prefWidth="240" text="login" />
+            <Button onAction="#logInButtonOnAction" prefWidth="240" text="login" />
             <Button mnemonicParsing="false" onAction="#createAccount" prefHeight="25.0" prefWidth="254.0" text="Create Account" />
             <TextField fx:id="errorField" alignment="CENTER" editable="false" style="-fx-background-color: #ffc1bd; -fx-border-width: 2; -fx-border-style: solid; -fx-border-color: #e60000; -fx-border-radius: 4; -fx-alignment: center-left;" text="Username is not registered!" visible="false">
                 <font>
