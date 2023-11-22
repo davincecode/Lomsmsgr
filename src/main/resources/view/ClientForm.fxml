@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="pane" prefHeight="528.0" prefWidth="554.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ClientFormController">
+   <children>
+      <ScrollPane fx:id="scrollPain" layoutX="17.0" layoutY="61.0" prefHeight="406.0" prefWidth="520.0">
+         <content>
+            <VBox fx:id="vBox" prefHeight="391.0" prefWidth="503.0" />
+         </content>
+      </ScrollPane>
+      <TextField fx:id="txtMsg" layoutX="55.0" layoutY="480.0" onAction="#txtMsgOnAction" prefHeight="26.0" prefWidth="390.0" />
+      <JFXButton contentDisplay="GRAPHIC_ONLY" layoutX="482.0" layoutY="476.0" onAction="#sendButtonOnAction" prefHeight="26.0" prefWidth="29.0">
+         <graphic>
+            <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../img/send-icon.png" />
+               </image>
+            </ImageView>
+         </graphic></JFXButton>
+      <ImageView fitHeight="87.0" fitWidth="81.0" layoutX="-10.0" layoutY="-11.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/offlime.png" />
+         </image>
+      </ImageView>
+      <Text fill="#0d47a1" layoutX="65.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OffLime">
+         <font>
+            <Font name="Harlow Solid Italic" size="14.0" />
+         </font>
+      </Text>
+      <Text fx:id="txtLabel" fill="#2b50c9" layoutX="248.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+         <font>
+            <Font name="Bell MT Bold" size="20.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>

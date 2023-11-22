@@ -28,10 +28,10 @@ public class OnLimeDB {
         return connection;
     }
 
-    public String getUsername(String userId) {
-        String query = "SELECT username FROM users WHERE user_id = ?";
+    public String getUsername(String username) {
+        String query = "SELECT username FROM users WHERE username = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, userId);
+            preparedStatement.setString(1, username);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getString("username");
@@ -41,6 +41,19 @@ public class OnLimeDB {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean createAccount(String username, String encryptedPassword) {
+        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, encryptedPassword);
+            int result = preparedStatement.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void closeConnection() {
