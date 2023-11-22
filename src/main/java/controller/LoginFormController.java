@@ -39,11 +39,12 @@ public class LoginFormController {
                 primaryStage.setTitle(usernameFromDB);
                 primaryStage.setResizable(false);
                 primaryStage.centerOnScreen();
+
                 primaryStage.setOnCloseRequest(windowEvent -> {
-                    databaseConnector.closeConnection();
-                    Platform.exit();
-                    System.exit(0);
+                    windowEvent.consume();
+                    primaryStage.close();
                 });
+
                 primaryStage.show();
 
                 // Close form on Login
