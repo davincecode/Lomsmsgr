@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 
 public class ServerFormController {
     public VBox vBox;
-    public ScrollPane scrollPain;
+    public ScrollPane chatBox;
     public AnchorPane pane;
 
     private Server server;
@@ -38,7 +38,7 @@ public class ServerFormController {
         vBox.heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
-                scrollPain.setVvalue((Double) newValue);
+                chatBox.setVvalue((Double) newValue);
             }
         });
 

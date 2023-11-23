@@ -35,10 +35,10 @@ import java.util.ResourceBundle;
 
 
 public class ClientFormController implements Initializable {
-    public Text txtLabel;
-    public Text txtLabel1;
+    public Text txtLabelAllMessageUR;
+    public Text txtLabelAllMessageBL;
     public AnchorPane pane;
-    public ScrollPane scrollPain;
+    public ScrollPane chatBox;
     public VBox vBox;
     public TextField txtMsg;
     public JFXListView<String> usersList;
@@ -69,8 +69,8 @@ public class ClientFormController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        txtLabel.setText(clientName);
-        txtLabel1.setText(clientName);
+        txtLabelAllMessageUR.setText(clientName);
+        txtLabelAllMessageBL.setText(clientName);
 
         databaseConnector = new OnLimeDB();
 //        User selectedUser = getSelectedUser();
@@ -90,7 +90,7 @@ public class ClientFormController implements Initializable {
                     ServerFormController.receiveMessage(clientName+" joined.");
 
                     // Pass the VBox object and this ClientFormController instance to the ClientHandler constructor
-                    ClientHandler clientHandler = new ClientHandler(socket, clients, vBox, ClientFormController.this);
+                    ClientHandler clientHandler = new ClientHandler(socket, clients, vBox, ClientFormController.this, clientName);
                     clientHandler.setClientName(clientName);
 
 
@@ -108,7 +108,7 @@ public class ClientFormController implements Initializable {
         this.vBox.heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
-                scrollPain.setVvalue((Double) newValue);
+                chatBox.setVvalue((Double) newValue);
             }
         });
 
@@ -206,6 +206,9 @@ public class ClientFormController implements Initializable {
                 // Store the message in the database
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 databaseConnector.storeMessageInDB(clientName, receiverUsername, msgToSend, timestamp);
+
+                // Display the message with the sender's name
+                displayMessage(clientName, msgToSend, vBox);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -215,9 +218,11 @@ public class ClientFormController implements Initializable {
     }
 
     // Method to display a message in the user interface
-    private static void displayMessage(String message, VBox vBox) {
+    private static void displayMessage(String senderName,String message, VBox vBox) {
         // Create a new Text object with the message
-        Text text = new Text(message);
+//        Text text = new Text(message);
+        Text text = new Text(senderName + ": " + message);
+
 
         // Add the Text object to the vBox
         Platform.runLater(() -> vBox.getChildren().add(text));
@@ -234,7 +239,7 @@ public class ClientFormController implements Initializable {
         String msgFromServer = parts[1];
 
         // Pass the vBox to the displayMessage method
-        displayMessage(name + ": " + msgFromServer, vBox);
+        displayMessage(name, msgFromServer, vBox);
 
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER_LEFT);

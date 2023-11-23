@@ -20,7 +20,7 @@
                 </ImageView>
             </graphic>
         </JFXButton>
-        <ScrollPane fx:id="scrollPain" layoutX="18.0" layoutY="66.0" prefHeight="406.0" prefWidth="428.0">
+        <ScrollPane fx:id="chatBox" layoutX="18.0" layoutY="66.0" prefHeight="406.0" prefWidth="428.0">
             <content>
                 <VBox fx:id="vBox" prefHeight="403.0" prefWidth="425.0" style="-fx-background-color: #d9e3f0;" />
             </content>
