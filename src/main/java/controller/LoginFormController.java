@@ -1,7 +1,6 @@
 package controller;
 
 import database.OnLimeDB;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,6 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import server.Server;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -18,9 +18,15 @@ public class LoginFormController {
     public PasswordField txtPassword;
     private OnLimeDB databaseConnector = new OnLimeDB();
     private Encryptor encryptor = new Encryptor();
+    private Server server;
+    private String loggedInUser;
 
     public void initialize(){
-
+        try {
+            server = Server.getInstance();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void logInButtonOnAction(ActionEvent actionEvent) throws IOException {
@@ -32,30 +38,45 @@ public class LoginFormController {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/ClientForm.fxml"));
 
                 ClientFormController controller = new ClientFormController();
-                controller.setClientName(usernameFromDB);
+                controller.setClientName(usernameFromDB); // set the client name
                 fxmlLoader.setController(controller);
 
                 primaryStage.setScene(new Scene(fxmlLoader.load()));
                 primaryStage.setTitle(usernameFromDB);
                 primaryStage.setResizable(false);
                 primaryStage.centerOnScreen();
+
                 primaryStage.setOnCloseRequest(windowEvent -> {
-                    databaseConnector.closeConnection();
-                    Platform.exit();
-                    System.exit(0);
+                    windowEvent.consume();
+                    primaryStage.close();
                 });
+
                 primaryStage.show();
 
                 // Close form on Login
                 ((Stage) txtName.getScene().getWindow()).close();
 
                 txtName.clear();
+
+                // Notify the server that the user has logged in
+                server.userLoggedIn(usernameFromDB);
+
+                // Store the logged-in user's username
+                loggedInUser = usernameFromDB;
             } else {
                 new Alert(Alert.AlertType.ERROR, "Username not found in the database").show();
             }
         } else {
             new Alert(Alert.AlertType.ERROR, "Please enter a valid username").show();
         }
+    }
+
+    public void logOutButtonOnAction(ActionEvent actionEvent) {
+        // Notify the server that the user has logged out
+        server.userLoggedOut(loggedInUser);
+
+        // Close the application
+        ((Stage) txtName.getScene().getWindow()).close();
     }
 
     public void createAccount(ActionEvent actionEvent) {
@@ -82,5 +103,9 @@ public class LoginFormController {
 
     public void changeVisibility(ActionEvent actionEvent) {
         new Alert(Alert.AlertType.INFORMATION, "This feature is not available yet").show();
+    }
+
+    public String getLoggedInUser() {
+        return loggedInUser;
     }
 }
