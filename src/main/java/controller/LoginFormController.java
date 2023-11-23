@@ -19,6 +19,7 @@ public class LoginFormController {
     private OnLimeDB databaseConnector = new OnLimeDB();
     private Encryptor encryptor = new Encryptor();
     private Server server;
+    private String loggedInUser;
 
     public void initialize(){
         try {
@@ -37,7 +38,7 @@ public class LoginFormController {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/ClientForm.fxml"));
 
                 ClientFormController controller = new ClientFormController();
-                controller.setClientName(usernameFromDB);
+                controller.setClientName(usernameFromDB); // set the client name
                 fxmlLoader.setController(controller);
 
                 primaryStage.setScene(new Scene(fxmlLoader.load()));
@@ -59,12 +60,23 @@ public class LoginFormController {
 
                 // Notify the server that the user has logged in
                 server.userLoggedIn(usernameFromDB);
+
+                // Store the logged-in user's username
+                loggedInUser = usernameFromDB;
             } else {
                 new Alert(Alert.AlertType.ERROR, "Username not found in the database").show();
             }
         } else {
             new Alert(Alert.AlertType.ERROR, "Please enter a valid username").show();
         }
+    }
+
+    public void logOutButtonOnAction(ActionEvent actionEvent) {
+        // Notify the server that the user has logged out
+        server.userLoggedOut(loggedInUser);
+
+        // Close the application
+        ((Stage) txtName.getScene().getWindow()).close();
     }
 
     public void createAccount(ActionEvent actionEvent) {
@@ -91,5 +103,9 @@ public class LoginFormController {
 
     public void changeVisibility(ActionEvent actionEvent) {
         new Alert(Alert.AlertType.INFORMATION, "This feature is not available yet").show();
+    }
+
+    public String getLoggedInUser() {
+        return loggedInUser;
     }
 }

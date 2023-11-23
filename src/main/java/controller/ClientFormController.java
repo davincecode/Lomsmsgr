@@ -5,6 +5,7 @@ import database.OnLimeDB;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -52,6 +53,13 @@ public class ClientFormController implements Initializable {
         List<String> loggedInUsers = server.getLoggedInUsers();
         usersList.getItems().clear();
         usersList.getItems().addAll(loggedInUsers);
+        usersList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+
+            }
+        });
+
     }
 
     @Override
@@ -95,6 +103,19 @@ public class ClientFormController implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        // Listener for the list of logged-in users
+        server.getLoggedInUsers().addListener(new ListChangeListener<String>() {
+            @Override
+            public void onChanged(Change<? extends String> change) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateUsersList();
+                    }
+                });
+            }
+        });
 
         updateUsersList();
 

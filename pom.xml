@@ -55,6 +55,11 @@
             <artifactId>maven-settings</artifactId>
             <version>3.6.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>21-ea+24</version>
+        </dependency>
     </dependencies>
 
     <build>

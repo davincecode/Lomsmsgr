@@ -1,8 +1,11 @@
 package server;
 
 import client.ClientHandler;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -12,12 +15,24 @@ public class Server {
     private ServerSocket serverSocket;
     private Socket socket;
     private static Server server;
-    private List<String> loggedInUsers = new ArrayList<>();
+    private ObservableList<String> loggedInUsers = FXCollections.observableArrayList();
     private List<ClientHandler> clients = new ArrayList<>();
 
-
-    private Server() throws IOException {
+    public Server() throws IOException {
         serverSocket = new ServerSocket(3001);
+
+        loggedInUsers.addListener(new ListChangeListener<String>() {
+            @Override
+            public void onChanged(Change<? extends String> change) {
+                while (change.next()) {
+                    if (change.wasAdded()) {
+                        // handle user logged in
+                    } else if (change.wasRemoved()) {
+                        // handle user logged out
+                    }
+                }
+            }
+        });
     }
 
     public static Server getInstance() throws IOException {
@@ -47,7 +62,7 @@ public class Server {
         printLoggedInUsers();
     }
 
-    public List<String> getLoggedInUsers() {
+    public ObservableList<String> getLoggedInUsers() {
         return loggedInUsers;
     }
 
