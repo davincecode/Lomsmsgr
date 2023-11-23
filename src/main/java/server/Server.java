@@ -1,9 +1,11 @@
 package server;
 
 import client.ClientHandler;
+import controller.ClientFormController;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -43,8 +45,9 @@ public class Server {
         while (!serverSocket.isClosed()){
             try{
                 socket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler(socket,clients);
-                clients.add(clientHandler);
+                VBox vBox = new VBox();
+                ClientFormController clientFormController = new ClientFormController();
+                ClientHandler clientHandler = new ClientHandler(socket, clients, vBox, clientFormController);
                 System.out.println("client socket accepted "+socket.toString());
             } catch (IOException e){
                 e.printStackTrace();

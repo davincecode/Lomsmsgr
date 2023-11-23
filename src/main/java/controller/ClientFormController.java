@@ -1,5 +1,6 @@
 package controller;
 
+import client.ClientHandler;
 import com.jfoenix.controls.JFXListView;
 import database.OnLimeDB;
 import javafx.application.Platform;
@@ -12,6 +13,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -31,6 +33,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
+
 public class ClientFormController implements Initializable {
     public Text txtLabel;
     public Text txtLabel1;
@@ -48,6 +51,8 @@ public class ClientFormController implements Initializable {
     private Server server;
     private OnLimeDB databaseConnector;
     private String receiverUsername;
+    private List<ClientHandler> clients;
+
 
     public void updateUsersList() {
         List<String> loggedInUsers = server.getLoggedInUsers();
@@ -71,6 +76,9 @@ public class ClientFormController implements Initializable {
 //        User selectedUser = getSelectedUser();
 //        receiverUsername = selectedUser.getUsername();
 
+        // Add a mouse click event listener to the userList
+        usersList.setOnMouseClicked(event -> clickedUsername(event));
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -80,6 +88,12 @@ public class ClientFormController implements Initializable {
                     dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     System.out.println("Client connected");
                     ServerFormController.receiveMessage(clientName+" joined.");
+
+                    // Pass the VBox object and this ClientFormController instance to the ClientHandler constructor
+                    ClientHandler clientHandler = new ClientHandler(socket, clients, vBox, ClientFormController.this);
+                    clientHandler.setClientName(clientName);
+
+
 
                     while (socket.isConnected()){
                         String receivingMsg = dataInputStream.readUTF();
@@ -130,11 +144,24 @@ public class ClientFormController implements Initializable {
         sendButtonOnAction(actionEvent);
     }
 
+    public void clickedUsername(MouseEvent event) {
+        // Get the clicked item
+        String clickedUsername = usersList.getSelectionModel().getSelectedItem();
+        // Set the receiverUsername to the clicked username
+        receiverUsername = clickedUsername;
+    }
+
     public void sendButtonOnAction(ActionEvent actionEvent) {
-//        String receiverUsername = databaseConnector.getReceiverUsername(clientName);
-        System.out.println("Sender: " + clientName); // Debug print
-        System.out.println("Receiver: " + receiverUsername); // Debug print
-        sendMsg(txtMsg.getText(), receiverUsername);
+        if (receiverUsername == null || receiverUsername.isEmpty()) {
+            System.out.println("No receiver selected. Broadcasting to all.");
+//            sendMsg(txtMsg.getText(), null);
+            sendMsg("BROADCAST-" + txtMsg.getText(), null);
+        } else {
+            System.out.println("Sender: " + clientName);
+            System.out.println("Receiver: " + receiverUsername);
+//            sendMsg(txtMsg.getText(), receiverUsername);
+            sendMsg(clientName + "-" + receiverUsername + "-" + txtMsg.getText(), receiverUsername);
+        }
     }
 
 
@@ -167,7 +194,13 @@ public class ClientFormController implements Initializable {
             vBox.getChildren().add(hBoxTime);
 
             try {
-                dataOutputStream.writeUTF(clientName + "-" + msgToSend);
+                if (receiverUsername != null) {
+                    // Send the message only to the user with receiverUsername
+                    dataOutputStream.writeUTF(clientName + "-" + receiverUsername + "-" + msgToSend);
+                } else {
+                    // Broadcast the message to all users
+                    dataOutputStream.writeUTF(clientName + "-" + msgToSend);
+                }
                 dataOutputStream.flush();
 
                 // Store the message in the database
@@ -181,9 +214,27 @@ public class ClientFormController implements Initializable {
         }
     }
 
+    // Method to display a message in the user interface
+    private static void displayMessage(String message, VBox vBox) {
+        // Create a new Text object with the message
+        Text text = new Text(message);
+
+        // Add the Text object to the vBox
+        Platform.runLater(() -> vBox.getChildren().add(text));
+    }
+
     public static void receiveMessage(String msg, VBox vBox) throws IOException {
-        String name = msg.split("-")[0];
-        String msgFromServer = msg.split("-")[1];
+        String[] parts = msg.split("-");
+        if (parts.length < 2) {
+            System.out.println("Invalid message format");
+            return;
+        }
+
+        String name = parts[0];
+        String msgFromServer = parts[1];
+
+        // Pass the vBox to the displayMessage method
+        displayMessage(name + ": " + msgFromServer, vBox);
 
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER_LEFT);
