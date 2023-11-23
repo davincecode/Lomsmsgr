@@ -12,8 +12,9 @@ public class Server {
     private ServerSocket serverSocket;
     private Socket socket;
     private static Server server;
-
+    private List<String> loggedInUsers = new ArrayList<>();
     private List<ClientHandler> clients = new ArrayList<>();
+
 
     private Server() throws IOException {
         serverSocket = new ServerSocket(3001);
@@ -33,6 +34,27 @@ public class Server {
             } catch (IOException e){
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void userLoggedIn(String username) {
+        loggedInUsers.add(username);
+        printLoggedInUsers();
+    }
+
+    public void userLoggedOut(String username) {
+        loggedInUsers.remove(username);
+        printLoggedInUsers();
+    }
+
+    public List<String> getLoggedInUsers() {
+        return loggedInUsers;
+    }
+
+    public void printLoggedInUsers() {
+        System.out.println("Logged-in users:");
+        for (String username : loggedInUsers) {
+            System.out.println(username);
         }
     }
 }

@@ -1,7 +1,6 @@
 package controller;
 
 import database.OnLimeDB;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,6 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import server.Server;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -18,9 +18,14 @@ public class LoginFormController {
     public PasswordField txtPassword;
     private OnLimeDB databaseConnector = new OnLimeDB();
     private Encryptor encryptor = new Encryptor();
+    private Server server;
 
     public void initialize(){
-
+        try {
+            server = Server.getInstance();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void logInButtonOnAction(ActionEvent actionEvent) throws IOException {
@@ -51,6 +56,9 @@ public class LoginFormController {
                 ((Stage) txtName.getScene().getWindow()).close();
 
                 txtName.clear();
+
+                // Notify the server that the user has logged in
+                server.userLoggedIn(usernameFromDB);
             } else {
                 new Alert(Alert.AlertType.ERROR, "Username not found in the database").show();
             }

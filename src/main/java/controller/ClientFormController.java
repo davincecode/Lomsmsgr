@@ -1,5 +1,7 @@
 package controller;
 
+import com.jfoenix.controls.JFXListView;
+import database.OnLimeDB;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,14 +17,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import server.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class ClientFormController implements Initializable {
@@ -32,16 +37,31 @@ public class ClientFormController implements Initializable {
     public ScrollPane scrollPain;
     public VBox vBox;
     public TextField txtMsg;
+    public JFXListView<String> usersList;
 
 
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private String clientName = "Client";
+    private Server server;
+    private OnLimeDB databaseConnector;
+    private String receiverUsername;
 
+    public void updateUsersList() {
+        List<String> loggedInUsers = server.getLoggedInUsers();
+        usersList.getItems().clear();
+        usersList.getItems().addAll(loggedInUsers);
+    }
+
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
         txtLabel.setText(clientName);
         txtLabel1.setText(clientName);
+
+        databaseConnector = new OnLimeDB();
+//        User selectedUser = getSelectedUser();
+//        receiverUsername = selectedUser.getUsername();
 
         new Thread(new Runnable() {
             @Override
@@ -70,6 +90,14 @@ public class ClientFormController implements Initializable {
             }
         });
 
+        try {
+            server = Server.getInstance();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        updateUsersList();
+
     }
 
     public void shutdown() {
@@ -82,10 +110,14 @@ public class ClientFormController implements Initializable {
     }
 
     public void sendButtonOnAction(ActionEvent actionEvent) {
-        sendMsg(txtMsg.getText());
+//        String receiverUsername = databaseConnector.getReceiverUsername(clientName);
+        System.out.println("Sender: " + clientName); // Debug print
+        System.out.println("Receiver: " + receiverUsername); // Debug print
+        sendMsg(txtMsg.getText(), receiverUsername);
     }
 
-    private void sendMsg(String msgToSend) {
+
+    private void sendMsg(String msgToSend, String receiverUsername) {
         if (!msgToSend.isEmpty()){
             HBox hBox = new HBox();
             hBox.setAlignment(Pos.CENTER_RIGHT);
@@ -113,10 +145,13 @@ public class ClientFormController implements Initializable {
             vBox.getChildren().add(hBox);
             vBox.getChildren().add(hBoxTime);
 
-
             try {
                 dataOutputStream.writeUTF(clientName + "-" + msgToSend);
                 dataOutputStream.flush();
+
+                // Store the message in the database
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                databaseConnector.storeMessageInDB(clientName, receiverUsername, msgToSend, timestamp);
             } catch (IOException e) {
                 e.printStackTrace();
             }
