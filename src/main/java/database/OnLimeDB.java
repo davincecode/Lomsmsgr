@@ -53,18 +53,34 @@ public class OnLimeDB {
     }
 
     public void storeMessageInDB(String senderUsername, String receiverUsername, String message, Timestamp timestamp) {
-        String query = "INSERT INTO messages (sender_id, receiver_id, message_text, timestamp) VALUES (?, ?, ?, ?)";
+        String query;
+        if (receiverUsername == null) {
+            // Broadcast message
+            query = "INSERT INTO messages (sender_id, message_text, timestamp) VALUES (?, ?, ?)";
+        } else {
+            // Direct message
+            query = "INSERT INTO messages (sender_id, receiver_id, message_text, timestamp) VALUES (?, ?, ?, ?)";
+        }
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             int senderId = getUserId(senderUsername);
-            int receiverId = getUserId(receiverUsername);
-            if (senderId == -1 || receiverId == -1) {
-                System.out.println("Sender or receiver not found in the database");
+            if (senderId == -1) {
+                System.out.println("Sender not found in the database");
                 return;
             }
             preparedStatement.setInt(1, senderId);
-            preparedStatement.setInt(2, receiverId);
-            preparedStatement.setString(3, message);
-            preparedStatement.setTimestamp(4, timestamp);
+            if (receiverUsername != null) {
+                int receiverId = getUserId(receiverUsername);
+                if (receiverId == -1) {
+                    System.out.println("Receiver not found in the database");
+                    return;
+                }
+                preparedStatement.setInt(2, receiverId);
+                preparedStatement.setString(3, message);
+                preparedStatement.setTimestamp(4, timestamp);
+            } else {
+                preparedStatement.setString(2, message);
+                preparedStatement.setTimestamp(3, timestamp);
+            }
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
