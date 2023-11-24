@@ -3,6 +3,8 @@ package database;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OnLimeDB {
     private Connection connection;
@@ -134,6 +136,22 @@ public class OnLimeDB {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<String> getAllMessages(Timestamp loginTime) {
+        List<String> messages = new ArrayList<>();
+        String query = "SELECT message_text FROM messages WHERE timestamp >= ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setTimestamp(1, loginTime);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    messages.add(resultSet.getString("message_text"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return messages;
     }
 
 

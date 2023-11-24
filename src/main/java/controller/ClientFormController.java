@@ -42,6 +42,8 @@ public class ClientFormController implements Initializable {
     public VBox vBox;
     public TextField txtMsg;
     public JFXListView<String> usersList;
+    public TextField txtMsgDM;
+    public JFXListView<String> usersListDM;
 
 
     private Socket socket;
@@ -73,11 +75,16 @@ public class ClientFormController implements Initializable {
         txtLabelAllMessageBL.setText(clientName);
 
         databaseConnector = new OnLimeDB();
-//        User selectedUser = getSelectedUser();
-//        receiverUsername = selectedUser.getUsername();
+
+        // Get the current time
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
+        // Pass the current time to the getAllMessages method
+        displayAllMessages(currentTime);
 
         // Add a mouse click event listener to the userList
         usersList.setOnMouseClicked(event -> clickedUsername(event));
+        usersListDM.setOnMouseClicked(event -> clickedUsernameDM(event));
 
         new Thread(new Runnable() {
             @Override
@@ -102,6 +109,30 @@ public class ClientFormController implements Initializable {
                 }catch (IOException e){
                     e.printStackTrace();
                 }
+            }
+        }).start();
+
+        // Listens for new messages in the database
+        new Thread(() -> {
+            try {
+                while (true) {
+                    // Fetch all messages from the database
+                    List<String> allMessages = databaseConnector.getAllMessages(currentTime);
+
+                    // Display any new messages
+                    Platform.runLater(() -> {
+                        for (String message : allMessages) {
+                            if (!vBox.getChildren().toString().contains(message)) {
+                                displayMessage("Server", message, vBox);
+                            }
+                        }
+                    });
+
+                    // Sleep for a while before checking again
+                    Thread.sleep(5000); // 5 seconds
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }).start();
 
@@ -135,6 +166,13 @@ public class ClientFormController implements Initializable {
 
     }
 
+    private void clickedUsernameDM(MouseEvent event) {
+        // Get the clicked item
+        String clickedUsername = usersListDM.getSelectionModel().getSelectedItem();
+        // Set the receiverUsername to the clicked username
+        receiverUsername = clickedUsername;
+    }
+
     public void shutdown() {
         // cleanup code here...
         ServerFormController.receiveMessage(clientName+" left.");
@@ -151,17 +189,39 @@ public class ClientFormController implements Initializable {
         receiverUsername = clickedUsername;
     }
 
+    /*
+    * Method to send a message to ALL
+     */
     public void sendButtonOnAction(ActionEvent actionEvent) {
         if (receiverUsername == null || receiverUsername.isEmpty()) {
             System.out.println("No receiver selected. Broadcasting to all.");
-//            sendMsg(txtMsg.getText(), null);
             sendMsg("BROADCAST-" + txtMsg.getText(), null);
         } else {
             System.out.println("Sender: " + clientName);
             System.out.println("Receiver: " + receiverUsername);
-//            sendMsg(txtMsg.getText(), receiverUsername);
             sendMsg(clientName + "-" + receiverUsername + "-" + txtMsg.getText(), receiverUsername);
         }
+    }
+
+    /*
+    * Method to send a message to a specific user
+     */
+    public void sendButtonOnActionDM(ActionEvent actionEvent) {
+        String msgToSend = txtMsgDM.getText();
+        String receiverUsername = usersListDM.getSelectionModel().getSelectedItem();
+        if (!msgToSend.isEmpty() && receiverUsername != null) {
+            try {
+                dataOutputStream.writeUTF(clientName + "-" + receiverUsername + "-" + msgToSend);
+                dataOutputStream.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            txtMsgDM.clear();
+        }
+    }
+
+    public void txtMsgOnActionDM(ActionEvent actionEvent) {
+        sendButtonOnActionDM(actionEvent);
     }
 
 
@@ -220,15 +280,24 @@ public class ClientFormController implements Initializable {
     // Method to display a message in the user interface
     private static void displayMessage(String senderName,String message, VBox vBox) {
         // Create a new Text object with the message
-//        Text text = new Text(message);
         Text text = new Text(senderName + ": " + message);
 
-
         // Add the Text object to the vBox
-        Platform.runLater(() -> vBox.getChildren().add(text));
+        Platform.runLater(() -> {
+            vBox.getChildren().add(text);
+            System.out.println("Message displayed: " + message); // Print the displayed message
+        });
+    }
+
+    public void displayAllMessages(Timestamp fromTime) {
+        List<String> messages = databaseConnector.getAllMessages(fromTime);
+        for (String message : messages) {
+            displayMessage("Server", message, vBox);
+        }
     }
 
     public static void receiveMessage(String msg, VBox vBox) throws IOException {
+        System.out.println("Receiving message: " + msg);
         String[] parts = msg.split("-");
         if (parts.length < 2) {
             System.out.println("Invalid message format");

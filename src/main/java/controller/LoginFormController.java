@@ -1,17 +1,22 @@
 package controller;
 
 import database.OnLimeDB;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import server.Server;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
+import java.util.List;
 
 public class LoginFormController {
     public TextField txtName;
@@ -20,6 +25,7 @@ public class LoginFormController {
     private Encryptor encryptor = new Encryptor();
     private Server server;
     private String loggedInUser;
+    public VBox vBox;
 
     public void initialize(){
         try {
@@ -69,6 +75,27 @@ public class LoginFormController {
         } else {
             new Alert(Alert.AlertType.ERROR, "Please enter a valid username").show();
         }
+
+        // Get the current time when the user logs in
+        Timestamp loginTime = new Timestamp(System.currentTimeMillis());
+
+        // Pass the login time to the getAllMessages method
+        List<String> messages = databaseConnector.getAllMessages(loginTime);
+        for (String message : messages) {
+            displayMessage("Server", message, vBox);
+        }
+    }
+
+    // Display a message in the user interface
+    private void displayMessage(String senderName, String message, VBox vBox) {
+        // Create a new Text object with the message
+        Text text = new Text(senderName + ": " + message);
+
+        // Add the Text object to the vBox
+        Platform.runLater(() -> {
+            vBox.getChildren().add(text);
+            System.out.println("Message displayed: " + message); // Print the displayed message
+        });
     }
 
     public void logOutButtonOnAction(ActionEvent actionEvent) {

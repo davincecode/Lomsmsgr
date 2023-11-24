@@ -113,6 +113,13 @@ public class ClientHandler {
                                 }
                             });
                         }
+                        // Find the ClientHandler for the receiver and call its receiveMessage method
+                        for (ClientHandler client : allClients) {
+                            if (client.getClientName().equals(receiverName)) {
+                                client.receiveMessage(senderName + ": " + msg);
+                                break;
+                            }
+                        }
                     }
                 }
             }

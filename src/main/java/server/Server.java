@@ -81,16 +81,19 @@ public class Server {
         }
     }
 
-    public void broadcastMessage(String message) {
+    public void broadcastMessage(String message, String senderUsername) {
+        System.out.println("Broadcasting message: " + message + " from user: " + senderUsername);
         for (ClientHandler client : clients) {
-            client.receiveMessage(message);
+            if (!client.getClientName().equals(senderUsername)) {
+                client.receiveMessage(message);
+            }
         }
     }
 
-    public void sendMessageToOne(String message, String recipientUsername) {
+    public void sendMessageToOne(String message, String senderUsername, String receiverUsername) {
         for (ClientHandler client : clients) {
-            if (client.getClientName().equals(recipientUsername)) {
-                client.receiveMessage(message);
+            if (client.getClientName().equals(receiverUsername)) {
+                client.receiveMessage(senderUsername + ": " + message);
                 break;
             }
         }

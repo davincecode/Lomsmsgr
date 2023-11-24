@@ -164,8 +164,8 @@
                               <VBox fx:id="vBoxDM" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="txtMsgDM" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
-                        <JFXButton fx:id="sendButtonDM" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                        <TextField fx:id="txtMsgDM" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnActionDM" prefHeight="45.0" prefWidth="443.0" />
+                        <JFXButton fx:id="sendButtonDM" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnActionDM" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
