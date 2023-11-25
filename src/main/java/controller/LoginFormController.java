@@ -54,11 +54,13 @@ public class LoginFormController {
 
                         // Get the controller associated with the FXML file
                         ClientFormController controller = fxmlLoader.getController();
-                        controller.setClientName(txtName.getText());
+                        // controller.setClientName(txtName.getText());
+                        controller.setClientName(username);
 
                         // Set up the new stage
                         primaryStage.setScene(new Scene(root));
-                        primaryStage.setTitle(txtName.getText());
+                        // primaryStage.setTitle(txtName.getText());
+                        primaryStage.setTitle(username);
                         primaryStage.setResizable(false);
                         primaryStage.centerOnScreen();
 

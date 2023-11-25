@@ -11,6 +11,11 @@
 
 <AnchorPane fx:id="pane" prefHeight="487.0" prefWidth="463.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.ServerFormController">
     <children>
+      <ImageView fitHeight="580.0" fitWidth="569.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/serverImg.jpg" />
+         </image>
+      </ImageView>
         <Button contentDisplay="GRAPHIC_ONLY" layoutX="395.0" layoutY="14.0" onAction="#addButtonOnAction" prefHeight="34.0" prefWidth="18.0" text="Button">
             <graphic>
                 <ImageView fitHeight="33.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
@@ -20,9 +25,9 @@
                 </ImageView>
             </graphic>
         </Button>
-        <ScrollPane fx:id="scrollPane" layoutX="18.0" layoutY="66.0" prefHeight="406.0" prefWidth="428.0">
+        <ScrollPane fx:id="scrollPane" layoutX="18.0" layoutY="66.0" prefHeight="471.0" prefWidth="428.0">
             <content>
-                <VBox fx:id="vBox" prefHeight="403.0" prefWidth="425.0" style="-fx-background-color: #d9e3f0;" />
+                <VBox fx:id="vBox" prefHeight="468.0" prefWidth="425.0" style="-fx-background-color: #2C777A;" />
             </content>
         </ScrollPane>
         <ImageView fitHeight="87.0" fitWidth="81.0" layoutX="-10.0" layoutY="-11.0" pickOnBounds="true" preserveRatio="true">
@@ -30,14 +35,9 @@
                 <Image url="@../img/send-icon.png" />
             </image>
         </ImageView>
-        <Text fill="#0d47a1" layoutX="65.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OnLimeChat">
+        <Text fill="WHITE" fontSmoothingType="LCD" layoutX="218.0" layoutY="39.0" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="OnLimeChat Server" textAlignment="CENTER">
             <font>
-                <Font name="Harlow Solid Italic" size="14.0" />
-            </font>
-        </Text>
-        <Text fill="#2b50c9" layoutX="203.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Server">
-            <font>
-                <Font name="Bell MT Bold" size="20.0" />
+                <Font name="Tahoma" size="20.0" />
             </font>
         </Text>
     </children>

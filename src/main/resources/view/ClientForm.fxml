@@ -1,41 +1,380 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<AnchorPane fx:id="pane" prefHeight="528.0" prefWidth="554.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/" fx:controller="controller.ClientFormController">
+
+<AnchorPane fx:id="pane" prefHeight="580.0" prefWidth="860.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ClientFormController">
    <children>
-      <ScrollPane fx:id="scrollPane" layoutX="17.0" layoutY="61.0" prefHeight="406.0" prefWidth="520.0">
-         <content>
-            <VBox fx:id="vBox" prefHeight="391.0" prefWidth="503.0" />
-         </content>
-      </ScrollPane>
-      <TextField fx:id="txtMsg" layoutX="55.0" layoutY="480.0" onAction="#txtMsgOnAction" prefHeight="26.0" prefWidth="390.0" />
-      <Button contentDisplay="GRAPHIC_ONLY" layoutX="482.0" layoutY="476.0" onAction="#sendButtonOnAction" prefHeight="26.0" prefWidth="29.0">
-         <graphic>
-            <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../img/send-icon.png" />
-               </image>
-            </ImageView>
-         </graphic></Button>
-      <ImageView fitHeight="87.0" fitWidth="81.0" layoutX="-10.0" layoutY="-11.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="imgBackground" fitHeight="580.0" fitWidth="860.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../img/send-icon.png" />
+            <Image url="@../img/imgBackground.jpg" />
          </image>
       </ImageView>
-      <Text fill="#0d47a1" layoutX="65.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OnLimeChat">
-         <font>
-            <Font name="Harlow Solid Italic" size="14.0" />
-         </font>
-      </Text>
-      <Text fx:id="txtLabel" fill="#2b50c9" layoutX="248.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
-         <font>
-            <Font name="Bell MT Bold" size="20.0" />
-         </font>
-      </Text>
+      <TabPane prefHeight="580.0" prefWidth="860.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab text="All Messages">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ScrollPane fx:id="scrollPane" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
+                           <content>
+                              <VBox fx:id="vBox" prefHeight="422.0" prefWidth="566.0" />
+                           </content>
+                        </ScrollPane>
+                        <TextField fx:id="txtMsg" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                           <graphic>
+                              <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/send-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Text fill="#0d47a1" strokeType="OUTSIDE" strokeWidth="0.0" text="OffLime">
+                           <font>
+                              <Font name="Harlow Solid Italic" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="txtLabelUR" fill="WHITE" layoutX="680.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="631.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
+                        <JFXListView fx:id="usersList" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="218.0" />
+                        <Text fx:id="txtLabelBL" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <Label layoutX="71.0" layoutY="540.0" text="Online" textFill="#e9ff00" />
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="23.0" layoutY="518.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="tabTitle" layoutX="59.0" layoutY="45.0" text="All Messages">
+                           <font>
+                              <Font name="Verdana" size="18.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="onlineDotUR" fitHeight="10.0" fitWidth="8.0" layoutX="721.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="onlineDotBL" fitHeight="10.0" fitWidth="8.0" layoutX="109.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="290.0" layoutY="31.0" text="NLIME">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                           <textFill>
+                              <LinearGradient endY="1.0" startX="0.3230403800475059" startY="0.503562945368171">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.18914473056793213" green="0.9078947305679321" blue="0.3808113932609558" opacity="0.7900000214576721" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="1.0" green="1.0" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </textFill>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Friends">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ScrollPane fx:id="scrollPane1" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
+                           <content>
+                              <VBox fx:id="vBox1" prefHeight="422.0" prefWidth="566.0" />
+                           </content>
+                        </ScrollPane>
+                        <TextField fx:id="txtMsg1" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                           <graphic>
+                              <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/send-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Text fill="#0d47a1" strokeType="OUTSIDE" strokeWidth="0.0" text="OffLime">
+                           <font>
+                              <Font name="Harlow Solid Italic" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="txtLabelUR1" fill="WHITE" layoutX="680.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="631.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
+                        <JFXListView fx:id="usersList1" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="218.0" />
+                        <Text fx:id="txtLabelBL1" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <Label layoutX="71.0" layoutY="540.0" text="Online" textFill="#e9ff00" />
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="23.0" layoutY="518.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="tabTitle1" layoutX="59.0" layoutY="45.0" text="All Messages">
+                           <font>
+                              <Font name="Verdana" size="18.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="onlineDotUR1" fitHeight="10.0" fitWidth="8.0" layoutX="721.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="onlineDotBL1" fitHeight="10.0" fitWidth="8.0" layoutX="109.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="290.0" layoutY="31.0" text="NLIME">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                           <textFill>
+                              <LinearGradient endY="1.0" startX="0.3230403800475059" startY="0.503562945368171">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.18914473056793213" green="0.9078947305679321" blue="0.3808113932609558" opacity="0.7900000214576721" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="1.0" green="1.0" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </textFill>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Direct Message">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ScrollPane fx:id="scrollPane11" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
+                           <content>
+                              <VBox fx:id="vBox11" prefHeight="422.0" prefWidth="566.0" />
+                           </content>
+                        </ScrollPane>
+                        <TextField fx:id="txtMsg11" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                           <graphic>
+                              <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/send-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Text fill="#0d47a1" strokeType="OUTSIDE" strokeWidth="0.0" text="OffLime">
+                           <font>
+                              <Font name="Harlow Solid Italic" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="txtLabelUR11" fill="WHITE" layoutX="680.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="631.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
+                        <JFXListView fx:id="usersList11" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="218.0" />
+                        <Text fx:id="txtLabelBL11" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <Label layoutX="71.0" layoutY="540.0" text="Online" textFill="#e9ff00" />
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="23.0" layoutY="518.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="tabTitle11" layoutX="59.0" layoutY="45.0" text="All Messages">
+                           <font>
+                              <Font name="Verdana" size="18.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="onlineDotUR11" fitHeight="10.0" fitWidth="8.0" layoutX="721.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="onlineDotBL11" fitHeight="10.0" fitWidth="8.0" layoutX="109.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="290.0" layoutY="31.0" text="NLIME">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                           <textFill>
+                              <LinearGradient endY="1.0" startX="0.3230403800475059" startY="0.503562945368171">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.18914473056793213" green="0.9078947305679321" blue="0.3808113932609558" opacity="0.7900000214576721" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="1.0" green="1.0" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </textFill>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Settings">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ScrollPane fx:id="scrollPane111" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
+                           <content>
+                              <VBox fx:id="vBox111" prefHeight="422.0" prefWidth="566.0" />
+                           </content>
+                        </ScrollPane>
+                        <TextField fx:id="txtMsg111" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                           <graphic>
+                              <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/send-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Text fill="#0d47a1" strokeType="OUTSIDE" strokeWidth="0.0" text="OffLime">
+                           <font>
+                              <Font name="Harlow Solid Italic" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="txtLabelUR111" fill="WHITE" layoutX="680.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="631.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
+                        <JFXListView fx:id="usersList111" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="218.0" />
+                        <Text fx:id="txtLabelBL111" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <Label layoutX="71.0" layoutY="540.0" text="Online" textFill="#e9ff00" />
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="23.0" layoutY="518.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="tabTitle111" layoutX="59.0" layoutY="45.0" text="All Messages">
+                           <font>
+                              <Font name="Verdana" size="18.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="onlineDotUR111" fitHeight="10.0" fitWidth="8.0" layoutX="721.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="onlineDotBL111" fitHeight="10.0" fitWidth="8.0" layoutX="109.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="290.0" layoutY="31.0" text="NLIME">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                           <textFill>
+                              <LinearGradient endY="1.0" startX="0.3230403800475059" startY="0.503562945368171">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color red="0.18914473056793213" green="0.9078947305679321" blue="0.3808113932609558" opacity="0.7900000214576721" />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="1.0" green="1.0" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </textFill>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
    </children>
 </AnchorPane>

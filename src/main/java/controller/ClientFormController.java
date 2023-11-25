@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -33,7 +34,9 @@ public class ClientFormController {
     public ScrollPane scrollPane;
     public VBox vBox;
     public TextField txtMsg;
-    public Text txtLabel;
+    public Text txtLabelUR;
+    public Text txtLabelBL;
+    
     private static int userId;
     private OnLimeDB onLimeDB;
     private Socket socket;
@@ -46,7 +49,12 @@ public class ClientFormController {
 
     public void initialize() {
         onLimeDB = new OnLimeDB();
-        txtLabel.textProperty().bind(clientNameProperty);
+        // String clientName = clientNameProperty.get();
+
+        // Fetch the userId when initializing the controller
+        txtLabelUR.textProperty().bind(clientNameProperty);
+        txtLabelBL.textProperty().bind(clientNameProperty);
+
 
         // Fetch the userId when initializing the controller
         String username = "yourUsername";
@@ -59,6 +67,8 @@ public class ClientFormController {
                 dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 System.out.println("Client connected");
                 ServerFormController.receiveMessage(clientNameProperty.get() + " joined.");
+                // debug print
+                System.out.println("CLIENT NAME" + clientNameProperty.get());
 
                 while (socket.isConnected() && !socket.isClosed()) {
                     try {
@@ -174,6 +184,17 @@ public class ClientFormController {
             vBox.getChildren().add(hBoxName);
             vBox.getChildren().add(hBox);
         });
+    }
+
+    public void clickedUsername(MouseEvent event) {
+        System.out.println("Clicked Username");
+        // Get the clicked item
+        // System.out.println("Clicked on " + usersList.getSelectionModel().getSelectedItem());
+        // Set the receiverUsername to the clicked username
+        // receiverUsername = clickedUsername;
+
+        // Add the clicked username to the usersListDM ListView
+        // usersListDM.getItems().add(clickedUsername);
     }
 
     public void setClientName(String name) {
