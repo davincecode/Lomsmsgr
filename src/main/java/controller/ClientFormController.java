@@ -1,258 +1,105 @@
 package controller;
 
-import client.ClientHandler;
-import com.jfoenix.controls.JFXListView;
 import database.OnLimeDB;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import server.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.URL;
+import java.net.SocketException;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.ResourceBundle;
 
-
-public class ClientFormController implements Initializable {
-    public AnchorPane directMessagePane;
-    public Text txtLabelAllMessageUR;
-    public Text txtLabelAllMessageBL;
+public class ClientFormController {
     public AnchorPane pane;
-    public ScrollPane chatBox;
+    public ScrollPane scrollPane;
     public VBox vBox;
     public TextField txtMsg;
-    public JFXListView<String> usersList;
-    public TextField txtMsgDM;
-    public JFXListView<String> usersListDM;
-    public VBox vBoxDM;
-
-
+    public Text txtLabel;
+    private static int userId;
+    private OnLimeDB onLimeDB;
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
-    private String clientName = "Client";
-    private Server server;
-    private OnLimeDB databaseConnector;
-    private String receiverUsername;
-    private List<ClientHandler> clients;
+    private StringProperty clientNameProperty = new SimpleStringProperty("Client");
 
+    @FXML
+    private ListView<String> userListView;
 
-    public void updateUsersList() {
-        List<String> loggedInUsers = server.getLoggedInUsers();
-        usersList.getItems().clear();
-        usersList.getItems().addAll(loggedInUsers);
-        usersList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+    public void initialize() {
+        onLimeDB = new OnLimeDB();
+        txtLabel.textProperty().bind(clientNameProperty);
 
-            }
-        });
+        // Fetch the userId when initializing the controller
+        String username = "yourUsername";
+        userId = onLimeDB.getUserId(username);
 
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        txtLabelAllMessageUR.setText(clientName);
-        txtLabelAllMessageBL.setText(clientName);
-
-        databaseConnector = new OnLimeDB();
-
-        // Get the current time
-        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-
-        // Pass the current time to the getAllMessages method
-        displayAllMessages(currentTime);
-
-        // Add a mouse click event listener to the userList
-        usersList.setOnMouseClicked(event -> clickedUsername(event));
-        usersListDM.setOnMouseClicked(event -> clickedUsernameDM(event));
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    socket = new Socket("localhost", 3001);
-                    dataInputStream = new DataInputStream(socket.getInputStream());
-                    dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                    System.out.println("Client connected");
-                    ServerFormController.receiveMessage(clientName+" joined.");
-
-                    // Pass the VBox object and this ClientFormController instance to the ClientHandler constructor
-                    ClientHandler clientHandler = new ClientHandler(socket, clients, vBox, ClientFormController.this, clientName);
-                    clientHandler.setClientName(clientName);
-
-
-
-                    while (socket.isConnected()){
-                        String receivingMsg = dataInputStream.readUTF();
-                        receiveMessage(receivingMsg, ClientFormController.this.vBox);
-                    }
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
-        // Listens for new messages in the database
         new Thread(() -> {
             try {
-                while (true) {
-                    // Fetch all messages from the database
-                    List<String> allMessages = databaseConnector.getAllMessages(currentTime);
+                socket = new Socket("localhost", 3001);
+                dataInputStream = new DataInputStream(socket.getInputStream());
+                dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                System.out.println("Client connected");
+                ServerFormController.receiveMessage(clientNameProperty.get() + " joined.");
 
-                    // Display any new messages
-                    Platform.runLater(() -> {
-                        for (String message : allMessages) {
-                            if (!vBox.getChildren().toString().contains(message)) {
-                                displayMessage("Server", message, vBox);
-                            }
-                        }
-                    });
-
-                    // Sleep for a while before checking again
-                    Thread.sleep(5000); // 5 seconds
+                while (socket.isConnected() && !socket.isClosed()) {
+                    try {
+                        String receivingMsg = dataInputStream.readUTF();
+                        receiveMessage(receivingMsg, this.vBox, new OnLimeDB(), 0);
+                    } catch (SocketException e) {
+                        System.out.println("Socket was closed, exiting read loop");
+                        break;
+                    }
                 }
-            } catch (InterruptedException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
 
-        this.vBox.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
-                chatBox.setVvalue((Double) newValue);
-            }
-        });
-
-        try {
-            server = Server.getInstance();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Listener for the list of logged-in users
-        server.getLoggedInUsers().addListener(new ListChangeListener<String>() {
-            @Override
-            public void onChanged(Change<? extends String> change) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateUsersList();
-                    }
-                });
-            }
-        });
-
-        updateUsersList();
-
-    }
-
-    private void clickedUsernameDM(MouseEvent event) {
-        // Get the clicked item
-        String clickedUsername = usersListDM.getSelectionModel().getSelectedItem();
-        // Set the receiverUsername to the clicked username
-        receiverUsername = clickedUsername;
-
-        // Create a new Label with the clicked username as the text
-        Label usernameLabel = new Label(clickedUsername);
-
-        // Create a new Button and set its onAction attribute to a method that will handle the button click
-        Button button = new Button("Click me");
-        button.setOnAction(e -> handleButtonClick());
-
-        // Add the Label and Button to the AnchorPane
-        directMessagePane.getChildren().addAll(usernameLabel, button);
-
-    }
-
-    private void handleButtonClick() {
-        // Get the message from the txtMsgDM TextField
-        String msgToSend = txtMsgDM.getText();
-
-        // Send the message to the receiver
-        sendMsg(msgToSend, receiverUsername);
-
-        // Clear the txtMsgDM TextField
-        txtMsgDM.clear();
+        this.vBox.heightProperty().addListener((observableValue, oldValue, newValue) ->
+                scrollPane.setVvalue((Double) newValue));
     }
 
     public void shutdown() {
-        // cleanup code here...
-        ServerFormController.receiveMessage(clientName+" left.");
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ServerFormController.receiveMessage(clientNameProperty.get() + " left.");
     }
 
     public void txtMsgOnAction(ActionEvent actionEvent) {
         sendButtonOnAction(actionEvent);
     }
 
-    public void clickedUsername(MouseEvent event) {
-        // Get the clicked item
-        String clickedUsername = usersList.getSelectionModel().getSelectedItem();
-        // Set the receiverUsername to the clicked username
-        receiverUsername = clickedUsername;
-
-        // Add the clicked username to the usersListDM ListView
-        usersListDM.getItems().add(clickedUsername);
-    }
-
-    /*
-    * Method to send a message to ALL
-     */
     public void sendButtonOnAction(ActionEvent actionEvent) {
-        if (receiverUsername == null || receiverUsername.isEmpty()) {
-            System.out.println("No receiver selected. Broadcasting to all.");
-            sendMsg("BROADCAST-" + txtMsg.getText(), null);
-        } else {
-            System.out.println("Sender: " + clientName);
-            System.out.println("Receiver: " + receiverUsername);
-            sendMsg(clientName + "-" + receiverUsername + "-" + txtMsg.getText(), receiverUsername);
-        }
+        sendMsg(txtMsg.getText());
     }
 
-    /*
-    * Method to send a message to a specific user
-     */
-    public void sendButtonOnActionDM(ActionEvent actionEvent) {
-        String msgToSend = txtMsgDM.getText();
-        String receiverUsername = usersListDM.getSelectionModel().getSelectedItem();
-        if (!msgToSend.isEmpty() && receiverUsername != null) {
-            try {
-                dataOutputStream.writeUTF(clientName + "-" + receiverUsername + "-" + msgToSend);
-                dataOutputStream.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            txtMsgDM.clear();
-        }
-    }
+    private void sendMsg(String msgToSend) {
+        if (!msgToSend.isEmpty()) {
 
-    public void txtMsgOnActionDM(ActionEvent actionEvent) {
-        sendButtonOnActionDM(actionEvent);
-    }
-
-
-    private void sendMsg(String msgToSend, String receiverUsername) {
-        if (!msgToSend.isEmpty()){
             HBox hBox = new HBox();
             hBox.setAlignment(Pos.CENTER_RIGHT);
             hBox.setPadding(new Insets(5, 5, 0, 10));
@@ -280,22 +127,11 @@ public class ClientFormController implements Initializable {
             vBox.getChildren().add(hBoxTime);
 
             try {
-                if (receiverUsername != null) {
-                    // Send the message only to the user with receiverUsername
-                    dataOutputStream.writeUTF(clientName + "-" + receiverUsername + "-" + msgToSend);
-                } else {
-                    // Broadcast the message to all users
-                    // Include the sender's username in the message
-                    dataOutputStream.writeUTF(clientName + "-BROADCAST-" + msgToSend);
-                }
+                dataOutputStream.writeUTF(clientNameProperty.get() + "-" + msgToSend);
                 dataOutputStream.flush();
 
                 // Store the message in the database
-                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                databaseConnector.storeMessageInDB(clientName, receiverUsername, msgToSend, timestamp);
-
-                // Display the message with the sender's name
-                displayMessage(clientName, msgToSend, vBox);
+                onLimeDB.storeMessageInDB(clientNameProperty.get(), null, msgToSend, new Timestamp(System.currentTimeMillis()), 1);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -304,42 +140,13 @@ public class ClientFormController implements Initializable {
         }
     }
 
-    // Method to display a message in the user interface
-    private static void displayMessage(String senderName,String message, VBox vBox) {
-        // Create a new Text object with the message
-        Text text = new Text(senderName + ": " + message);
-
-        // Add the Text object to the vBox
-        Platform.runLater(() -> {
-            vBox.getChildren().add(text);
-            System.out.println("Message displayed: " + message); // Print the displayed message
-        });
-    }
-
-    public void displayAllMessages(Timestamp fromTime) {
-        List<String> messages = databaseConnector.getAllMessages(fromTime);
-        for (String message : messages) {
-            displayMessage("Server", message, vBox);
-        }
-    }
-
-    public static void receiveMessage(String msg, VBox vBox) throws IOException {
-        System.out.println("Receiving message: " + msg);
-        String[] parts = msg.split("-");
-        if (parts.length < 2) {
-            System.out.println("Invalid message format");
-            return;
-        }
-
-        String name = parts[0];
-        String msgFromServer = parts[1];
-
-        // Pass the vBox to the displayMessage method
-        displayMessage(name, msgFromServer, vBox);
+    public void receiveMessage(String msg, VBox vBox, OnLimeDB onLimeDB, int messageId) throws IOException {
+        String name = msg.split("-")[0];
+        String msgFromServer = msg.split("-")[1];
 
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER_LEFT);
-        hBox.setPadding(new Insets(5,5,5,10));
+        hBox.setPadding(new Insets(5, 5, 5, 10));
 
         HBox hBoxName = new HBox();
         hBoxName.setAlignment(Pos.CENTER_LEFT);
@@ -350,22 +157,26 @@ public class ClientFormController implements Initializable {
         Text text = new Text(msgFromServer);
         TextFlow textFlow = new TextFlow(text);
         textFlow.setStyle("-fx-background-color: #abb8c3; -fx-font-weight: bold; -fx-background-radius: 20px");
-        textFlow.setPadding(new Insets(5,10,5,10));
-        text.setFill(Color.color(0,0,0));
+        textFlow.setPadding(new Insets(5, 10, 5, 10));
+        text.setFill(Color.color(0, 0, 0));
 
         hBox.getChildren().add(textFlow);
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                vBox.getChildren().add(hBoxName);
-                vBox.getChildren().add(hBox);
-            }
+        Button deleteButton = new Button("Delete");
+        deleteButton.setOnAction(event -> {
+            onLimeDB.deleteMessage(messageId, userId);
+            vBox.getChildren().remove(hBox);
+        });
+
+        hBox.getChildren().add(deleteButton);
+
+        Platform.runLater(() -> {
+            vBox.getChildren().add(hBoxName);
+            vBox.getChildren().add(hBox);
         });
     }
 
     public void setClientName(String name) {
-        clientName = name;
+        clientNameProperty.set(name);
     }
-
 }

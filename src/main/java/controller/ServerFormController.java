@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 
 public class ServerFormController {
     public VBox vBox;
-    public ScrollPane chatBox;
+    public ScrollPane scrollPane;
     public AnchorPane pane;
 
     private Server server;
@@ -38,7 +38,7 @@ public class ServerFormController {
         vBox.heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
-                chatBox.setVvalue((Double) newValue);
+                scrollPane.setVvalue((Double) newValue);
             }
         });
 
@@ -112,12 +112,12 @@ public class ServerFormController {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(pane.getScene().getWindow());
         try {
-            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("../view/LoginForm.fxml"))));
+            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/LoginForm.fxml"))));
         } catch (IOException e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR,"something went wrong. can't add client").show();
         }
-        stage.setTitle("chatter");
+        stage.setTitle("OnLimeChat");
         stage.centerOnScreen();
         stage.setResizable(false);
         stage.show();

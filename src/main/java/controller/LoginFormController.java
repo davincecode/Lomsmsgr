@@ -4,135 +4,73 @@ import database.OnLimeDB;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import server.Server;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
-import java.util.List;
 
 public class LoginFormController {
-    public TextField txtName;
-    public PasswordField txtPassword;
-    private OnLimeDB databaseConnector = new OnLimeDB();
-    private Encryptor encryptor = new Encryptor();
-    private Server server;
-    private String loggedInUser;
-    public VBox vBox;
+    public javafx.scene.control.TextField txtName;
+    public javafx.scene.control.TextField txtNameP;
+    private OnLimeDB onLimeDB;
 
-    public void initialize(){
-        try {
-            server = Server.getInstance();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void initialize() {
+        onLimeDB = new OnLimeDB();
     }
 
     public void logInButtonOnAction(ActionEvent actionEvent) throws IOException {
         String username = txtName.getText();
-        if (!username.isEmpty() && username.matches("[A-Za-z0-9]+")) {
-            String usernameFromDB = databaseConnector.getUsername(username);
-            if (usernameFromDB != null) {
+        String password = txtNameP.getText();
+
+        int userId = onLimeDB.getUserId(username);
+        if (userId != -1) {
+            if (!txtName.getText().isEmpty() && txtName.getText().matches("[A-Za-z0-9]+")) {
+                // Create the new stage for the client form
                 Stage primaryStage = new Stage();
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/ClientForm.fxml"));
 
-                ClientFormController controller = new ClientFormController();
-                controller.setClientName(usernameFromDB); // set the client name
-                fxmlLoader.setController(controller);
+                // Load the FXML file using the FXMLLoader
+                Parent root = fxmlLoader.load();
 
-                primaryStage.setScene(new Scene(fxmlLoader.load()));
-                primaryStage.setTitle(usernameFromDB);
+                // Get the controller associated with the FXML file
+                ClientFormController controller = fxmlLoader.getController();
+                controller.setClientName(txtName.getText());
+
+                // Set up the new stage
+                primaryStage.setScene(new Scene(root));
+                primaryStage.setTitle(txtName.getText());
                 primaryStage.setResizable(false);
                 primaryStage.centerOnScreen();
 
-                primaryStage.setOnCloseRequest(windowEvent -> {
-                    windowEvent.consume();
-                    primaryStage.close();
-                });
+                // Set the close request event
+                primaryStage.setOnCloseRequest(windowEvent -> controller.shutdown());
 
-                primaryStage.show();
-
-                // Close form on Login
+                // Close the login stage
                 ((Stage) txtName.getScene().getWindow()).close();
 
+                // Show the new stage
+                Platform.runLater(primaryStage::show);
+
                 txtName.clear();
-
-                // Notify the server that the user has logged in
-                server.userLoggedIn(usernameFromDB);
-
-                // Store the logged-in user's username
-                loggedInUser = usernameFromDB;
             } else {
-                new Alert(Alert.AlertType.ERROR, "Username not found in the database").show();
+                new Alert(Alert.AlertType.ERROR, "Please enter your name").show();
             }
         } else {
-            new Alert(Alert.AlertType.ERROR, "Please enter a valid username").show();
-        }
-
-        // Get the current time when the user logs in
-        Timestamp loginTime = new Timestamp(System.currentTimeMillis());
-
-        // Pass the login time to the getAllMessages method
-        List<String> messages = databaseConnector.getAllMessages(loginTime);
-        for (String message : messages) {
-            displayMessage("Server", message, vBox);
+            new Alert(Alert.AlertType.ERROR, "User does not exist").show();
         }
     }
 
-    // Display a message in the user interface
-    private void displayMessage(String senderName, String message, VBox vBox) {
-        // Create a new Text object with the message
-        Text text = new Text(senderName + ": " + message);
-
-        // Add the Text object to the vBox
-        Platform.runLater(() -> {
-            vBox.getChildren().add(text);
-            System.out.println("Message displayed: " + message); // Print the displayed message
-        });
-    }
-
-    public void logOutButtonOnAction(ActionEvent actionEvent) {
-        // Notify the server that the user has logged out
-        server.userLoggedOut(loggedInUser);
-
-        // Close the application
-        ((Stage) txtName.getScene().getWindow()).close();
-    }
-
-    public void createAccount(ActionEvent actionEvent) {
+    public void createAccountOnAction(ActionEvent actionEvent) {
         String username = txtName.getText();
-        String password = txtPassword.getText();
+        String password = txtNameP.getText();
 
-        if (!username.isEmpty() && !password.isEmpty() && username.matches("[A-Za-z0-9]+")) {
-            try {
-                String encryptedPassword = encryptor.encryptString(password);
-                boolean isCreated = databaseConnector.createAccount(username, encryptedPassword);
-
-                if (isCreated) {
-                    new Alert(Alert.AlertType.INFORMATION, "Account created successfully").show();
-                } else {
-                    new Alert(Alert.AlertType.ERROR, "Failed to create account").show();
-                }
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
+        boolean accountCreated = onLimeDB.createAccount(username, password);
+        if (accountCreated) {
+            new Alert(Alert.AlertType.INFORMATION, "Account created successfully").show();
         } else {
-            new Alert(Alert.AlertType.ERROR, "Please enter a valid username and password").show();
+            new Alert(Alert.AlertType.ERROR, "Failed to create account").show();
         }
-    }
-
-    public void changeVisibility(ActionEvent actionEvent) {
-        new Alert(Alert.AlertType.INFORMATION, "This feature is not available yet").show();
-    }
-
-    public String getLoggedInUser() {
-        return loggedInUser;
     }
 }
