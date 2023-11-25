@@ -35,40 +35,52 @@ public class LoginFormController {
 
     public void logInButtonOnAction(ActionEvent actionEvent) throws IOException {
         String username = txtName.getText();
-        String password = txtNameP.getText();
+        String enteredPassword = txtNameP.getText();
 
         int userId = onLimeDB.getUserId(username);
         if (userId != -1) {
-            if (!txtName.getText().isEmpty() && txtName.getText().matches("[A-Za-z0-9]+")) {
-                // Create the new stage for the client form
-                Stage primaryStage = new Stage();
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/ClientForm.fxml"));
+            try {
+                String storedPassword = onLimeDB.getPassword(username);
+                String encryptedEnteredPassword = encryptor.encryptString(enteredPassword);
+                if (encryptedEnteredPassword.equals(storedPassword)) {
+                    // Password matches, proceed to ClientForm.fxml
+                    if (!txtName.getText().isEmpty() && txtName.getText().matches("[A-Za-z0-9]+")) {
+                        // Create the new stage for the client form
+                        Stage primaryStage = new Stage();
+                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/ClientForm.fxml"));
 
-                // Load the FXML file using the FXMLLoader
-                Parent root = fxmlLoader.load();
+                        // Load the FXML file using the FXMLLoader
+                        Parent root = fxmlLoader.load();
 
-                // Get the controller associated with the FXML file
-                ClientFormController controller = fxmlLoader.getController();
-                controller.setClientName(txtName.getText());
+                        // Get the controller associated with the FXML file
+                        ClientFormController controller = fxmlLoader.getController();
+                        controller.setClientName(txtName.getText());
 
-                // Set up the new stage
-                primaryStage.setScene(new Scene(root));
-                primaryStage.setTitle(txtName.getText());
-                primaryStage.setResizable(false);
-                primaryStage.centerOnScreen();
+                        // Set up the new stage
+                        primaryStage.setScene(new Scene(root));
+                        primaryStage.setTitle(txtName.getText());
+                        primaryStage.setResizable(false);
+                        primaryStage.centerOnScreen();
 
-                // Set the close request event
-                primaryStage.setOnCloseRequest(windowEvent -> controller.shutdown());
+                        // Set the close request event
+                        primaryStage.setOnCloseRequest(windowEvent -> controller.shutdown());
 
-                // Close the login stage
-                ((Stage) txtName.getScene().getWindow()).close();
+                        // Close the login stage
+                        ((Stage) txtName.getScene().getWindow()).close();
 
-                // Show the new stage
-                Platform.runLater(primaryStage::show);
+                        // Show the new stage
+                        Platform.runLater(primaryStage::show);
 
-                txtName.clear();
-            } else {
-                new Alert(Alert.AlertType.ERROR, "Please enter your name").show();
+                        txtName.clear();
+                    } else {
+                        new Alert(Alert.AlertType.ERROR, "Please enter your name").show();
+                    }
+                } else {
+                    // Password does not match, show an error message
+                    new Alert(Alert.AlertType.ERROR, "Incorrect password").show();
+                }
+            } catch (NoSuchAlgorithmException e) {
+                new Alert(Alert.AlertType.ERROR, "Failed to encrypt password").show();
             }
         } else {
             new Alert(Alert.AlertType.ERROR, "User does not exist").show();
