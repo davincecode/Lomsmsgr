@@ -1,37 +1,33 @@
 package client;
 
-import controller.ClientController;
+import controller.ClientFormController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.util.Objects;
+import java.io.IOException;
 
 public class ClientLauncher extends Application {
-
-    private ClientController mainController;
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        mainController = new ClientController();
-
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/views/LoginScreen.fxml")));
-        String css = Objects.requireNonNull(getClass().getResource("/views/styles.css")).toExternalForm();
-        root.getStylesheets().add(css);
-
-        primaryStage.setTitle("OnLime Chatter");
-        primaryStage.setScene(new Scene(root));
-        primaryStage.show();
-    }
-
-    @Override
-    public void stop() {
-        mainController.closeConnection();
-    }
-
     public static void main(String[] args) {
         launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/ClientForm.fxml"));
+        ClientFormController controller = new ClientFormController();
+        fxmlLoader.setController(controller);
+        primaryStage.setScene(new Scene(fxmlLoader.load()));
+
+        Stage stage = new Stage();
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(primaryStage.getScene().getWindow());
+        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/LoginForm.fxml"))));
+        stage.setTitle("OnLimeChat");
+        stage.centerOnScreen();
+        stage.setResizable(false);
+        stage.show();
     }
 }
