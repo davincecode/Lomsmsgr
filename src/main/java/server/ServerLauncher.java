@@ -3,6 +3,7 @@ package server;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -15,21 +16,21 @@ public class ServerLauncher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        showServer(primaryStage);
-    }
 
-    private void showServer(Stage primaryStage) throws IOException {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/ServerScreen.fxml"));
-            Scene scene = new Scene(loader.load());
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("Server");
-            primaryStage.centerOnScreen();
-            primaryStage.setResizable(false);
-            primaryStage.show();
-        } catch (IOException e) {
-            System.out.println("Error loading ServerScreen.fxml");
-            e.printStackTrace();
-        }
+        primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("../view/ServerForm.fxml"))));
+        primaryStage.setTitle("Server");
+        primaryStage.centerOnScreen();
+        primaryStage.setResizable(false);
+        primaryStage.show();
+
+        Stage stage = new Stage();
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(primaryStage.getScene().getWindow());
+        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("../view/LoginForm.fxml"))));
+        stage.setTitle("OnLimeChat");
+        stage.centerOnScreen();
+        stage.setResizable(false);
+        stage.show();
+
     }
 }

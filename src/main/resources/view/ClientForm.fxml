@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="pane" prefHeight="580.0" prefWidth="860.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fx:id="imgBackground" fitHeight="580.0" fitWidth="860.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/imgBackground.jpg" />
+         </image>
+      </ImageView>
+      <TabPane prefHeight="580.0" prefWidth="860.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="All Messages">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ScrollPane fx:id="chatBox" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
+                           <content>
+                              <VBox fx:id="vBox" prefHeight="422.0" prefWidth="566.0" />
+                           </content>
+                        </ScrollPane>
+                        <TextField fx:id="txtMsg" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <JFXButton fx:id="sendButton" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                           <graphic>
+                              <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/send-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton>
+                        <Text fill="#0d47a1" strokeType="OUTSIDE" strokeWidth="0.0" text="OffLime">
+                           <font>
+                              <Font name="Harlow Solid Italic" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="txtLabelAllMessageUR" fill="WHITE" layoutX="690.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="759.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="692.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
+                        <JFXListView fx:id="usersList" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="218.0" />
+                        <Text fx:id="txtLabelAllMessageBL" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <Label layoutX="71.0" layoutY="540.0" text="Online" textFill="#e9ff00" />
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="23.0" layoutY="518.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="tabTitle" layoutX="59.0" layoutY="45.0" text="All Messages">
+                           <font>
+                              <Font name="Verdana" size="18.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="onlineDotUR" fitHeight="10.0" fitWidth="8.0" layoutX="731.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="onlineDotBL" fitHeight="10.0" fitWidth="8.0" layoutX="109.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Friends">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ScrollPane fx:id="chatBox1" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
+                           <content>
+                              <VBox fx:id="vBox1" prefHeight="422.0" prefWidth="566.0" />
+                           </content>
+                        </ScrollPane>
+                        <TextField fx:id="txtMsg1" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <JFXButton fx:id="sendButton1" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                           <graphic>
+                              <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/send-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton>
+                        <Text fill="#0d47a1" strokeType="OUTSIDE" strokeWidth="0.0" text="OffLime">
+                           <font>
+                              <Font name="Harlow Solid Italic" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="txtLabelAllMessageUR1" fill="WHITE" layoutX="690.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="759.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="692.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
+                        <JFXListView fx:id="usersList1" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="218.0" />
+                        <Text fx:id="txtLabelAllMessageBL1" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <Label layoutX="71.0" layoutY="540.0" text="Online" textFill="#e9ff00" />
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="23.0" layoutY="518.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="tabTitle1" layoutX="59.0" layoutY="45.0" text="Friends List">
+                           <font>
+                              <Font name="Verdana" size="18.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="onlineDot1" fitHeight="10.0" fitWidth="8.0" layoutX="731.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="onlineDot11" fitHeight="10.0" fitWidth="8.0" layoutX="109.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Direct Message">
+               <content>
+                  <AnchorPane fx:id="directMessagePane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ScrollPane fx:id="chatBoxDM" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
+                           <content>
+                              <VBox fx:id="vBoxDM" prefHeight="422.0" prefWidth="566.0" />
+                           </content>
+                        </ScrollPane>
+                        <TextField fx:id="txtMsgDM" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnActionDM" prefHeight="45.0" prefWidth="443.0" />
+                        <JFXButton fx:id="sendButtonDM" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnActionDM" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                           <graphic>
+                              <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/send-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton>
+                        <Text fill="#0d47a1" strokeType="OUTSIDE" strokeWidth="0.0" text="OffLime">
+                           <font>
+                              <Font name="Harlow Solid Italic" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="txtLabelDMUR" fill="WHITE" layoutX="690.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="759.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="692.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
+                        <JFXListView fx:id="usersListDM" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="218.0" />
+                        <Text fx:id="txtLabelDMBL" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font name="Bell MT Bold" size="20.0" />
+                           </font>
+                        </Text>
+                        <Label layoutX="71.0" layoutY="540.0" text="Online" textFill="#e9ff00" />
+                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="23.0" layoutY="518.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="tabTitleDM" layoutX="59.0" layoutY="45.0" text="Direct Message">
+                           <font>
+                              <Font name="Verdana" size="18.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="onlineDotDMUR" fitHeight="10.0" fitWidth="8.0" layoutX="731.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fx:id="onlineDotDMBL" fitHeight="10.0" fitWidth="8.0" layoutX="109.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/online-dot.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Settings">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
