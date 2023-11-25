@@ -1,11 +1,8 @@
 package client;
 
-import controller.ClientFormController;
-import javafx.application.Platform;
-import javafx.scene.layout.VBox;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
@@ -16,64 +13,43 @@ public class ClientHandler {
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private String msg = "";
-    private String clientName;
-    private VBox vBox;
-    private ClientFormController clientFormController;
 
-    public ClientHandler(Socket socket, List<ClientHandler> clients, VBox vBox, ClientFormController clientFormController) {
+    public ClientHandler(Socket socket, List<ClientHandler> clients) {
         try {
             this.socket = socket;
             this.clients = clients;
-            this.vBox = vBox;
-            this.clientFormController = clientFormController;
             this.dataInputStream = new DataInputStream(socket.getInputStream());
             this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    while (socket.isConnected()){
-                        String receivingMsg = dataInputStream.readUTF();
-                        String[] parts = receivingMsg.split("-");
-                        if (parts.length == 3) {
-                            // Direct message
-                            String senderName = parts[0];
-                            String receiverName = parts[1];
-                            String msg = parts[2];
-                            if (clientName.equals(receiverName)) {
-                                // This client is the receiver of the message
-                                Platform.runLater(() -> {
-                                    try {
-                                        clientFormController.receiveMessage(senderName + ": " + msg, vBox);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                });
+        new Thread(() -> {
+            try {
+                while (socket.isConnected()) {
+                    try {
+                        msg = dataInputStream.readUTF();
+                        for (ClientHandler clientHandler : clients) {
+                            if (clientHandler.socket.getPort() != socket.getPort()) {
+                                clientHandler.dataOutputStream.writeUTF(msg);
+                                clientHandler.dataOutputStream.flush();
                             }
-                        } else if (parts.length == 2) {
-                            // Broadcast message
-                            Platform.runLater(() -> {
-                                try {
-                                    clientFormController.receiveMessage(receivingMsg, vBox);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            });
                         }
+                    } catch (EOFException e) {
+                        // Handle EOFException (client disconnected)
+                        handleClientDisconnect();
+                        break;
                     }
-                }catch (IOException e){
-                    e.printStackTrace();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }).start();
-
     }
 
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
+    private void handleClientDisconnect() {
+        System.out.println("Client disconnected: " + socket);
+        clients.remove(this); // Remove this client from the list
+        // Perform any additional cleanup or notification as needed
     }
 }

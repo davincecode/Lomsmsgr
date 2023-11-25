@@ -17,7 +17,7 @@ public class ServerLauncher extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
 
-        primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("../view/ServerForm.fxml"))));
+        primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/ServerForm.fxml"))));
         primaryStage.setTitle("Server");
         primaryStage.centerOnScreen();
         primaryStage.setResizable(false);
@@ -26,7 +26,7 @@ public class ServerLauncher extends Application {
         Stage stage = new Stage();
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(primaryStage.getScene().getWindow());
-        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("../view/LoginForm.fxml"))));
+        stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/LoginForm.fxml"))));
         stage.setTitle("OnLimeChat");
         stage.centerOnScreen();
         stage.setResizable(false);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -11,7 +11,7 @@
 
 <AnchorPane fx:id="pane" prefHeight="487.0" prefWidth="463.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.ServerFormController">
     <children>
-        <JFXButton contentDisplay="GRAPHIC_ONLY" layoutX="395.0" layoutY="14.0" onAction="#addButtonOnAction" prefHeight="34.0" prefWidth="18.0" text="Button">
+        <Button contentDisplay="GRAPHIC_ONLY" layoutX="395.0" layoutY="14.0" onAction="#addButtonOnAction" prefHeight="34.0" prefWidth="18.0" text="Button">
             <graphic>
                 <ImageView fitHeight="33.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                     <image>
@@ -19,18 +19,18 @@
                     </image>
                 </ImageView>
             </graphic>
-        </JFXButton>
-        <ScrollPane fx:id="scrollPain" layoutX="18.0" layoutY="66.0" prefHeight="406.0" prefWidth="428.0">
+        </Button>
+        <ScrollPane fx:id="scrollPane" layoutX="18.0" layoutY="66.0" prefHeight="406.0" prefWidth="428.0">
             <content>
                 <VBox fx:id="vBox" prefHeight="403.0" prefWidth="425.0" style="-fx-background-color: #d9e3f0;" />
             </content>
         </ScrollPane>
         <ImageView fitHeight="87.0" fitWidth="81.0" layoutX="-10.0" layoutY="-11.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../img/offlime.png" />
+                <Image url="@../img/send-icon.png" />
             </image>
         </ImageView>
-        <Text fill="#0d47a1" layoutX="65.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OffLime">
+        <Text fill="#0d47a1" layoutX="65.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OnLimeChat">
             <font>
                 <Font name="Harlow Solid Italic" size="14.0" />
             </font>
