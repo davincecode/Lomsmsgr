@@ -7,6 +7,12 @@ import java.sql.*;
 public class OnLimeDB {
     private Connection connection;
 
+    /**
+     * Constructs an OnLimeDB instance and establishes a connection to the database.
+     *
+     * @throws ClassNotFoundException If the MySQL JDBC driver is not found
+     * @throws SQLException           If a database access error occurs
+     */
     public OnLimeDB() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -20,7 +26,12 @@ public class OnLimeDB {
         }
     }
 
-    // Checks if the username exists in the database
+    /**
+     * Retrieves the user ID from the database based on the provided username.
+     *
+     * @param username The username to check
+     * @return The user ID if the username exists, -1 otherwise
+     */
     public int getUserId(String username) {
         String query = "SELECT user_id FROM users WHERE username = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -39,7 +50,12 @@ public class OnLimeDB {
         return -1; // return -1 if user not found
     }
 
-    // Creates a new user account in the database
+    /**
+     * Creates a new account in the database
+     * @param username The username of the new account
+     * @param encryptedPassword The encrypted password of the new account
+     * @return true if the account was created successfully, false otherwise
+     */
     public boolean createAccount(String username, String encryptedPassword) {
         String query = "INSERT INTO users (username, password) VALUES (?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -53,8 +69,36 @@ public class OnLimeDB {
         return false;
     }
 
+    /**
+     * Checks if the username exists in the database
+     * @param username The username to check
+     * @return true if the username exists, false otherwise
+     */
+    public String getPassword(String username) {
+        String query = "SELECT password FROM users WHERE username = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, username);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString("password");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-    // Store message into the database
+
+    /**
+     * Stores a message in the database, either as a broadcast or a direct message.
+     *
+     * @param senderUsername    The username of the message sender
+     * @param receiverUsername  The username of the message receiver (null for broadcast messages)
+     * @param message           The text content of the message
+     * @param timestamp         The timestamp of the message
+     * @param teamId            The ID of the team associated with the message
+     */
     public void storeMessageInDB(String senderUsername, String receiverUsername, String message, Timestamp timestamp, int teamId) {
         String query;
         if (teamIdIsValid(teamId)) {
@@ -109,7 +153,11 @@ public class OnLimeDB {
         }
     }
 
-    // Check if the teamId exists in the teams table
+    /**
+     * Checks if the teamId exists in the database
+     * @param teamId The teamId to check
+     * @return true if the teamId exists, false otherwise
+     */
     private boolean teamIdIsValid(int teamId) {
         String query = "SELECT 1 FROM teams WHERE team_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -120,12 +168,15 @@ public class OnLimeDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false; // Return false in case of an exception
+        return false;
     }
 
-
-
-    // Delete message from the database
+    /**
+     * Deletes a message from the database based on the provided message ID and user ID.
+     *
+     * @param messageId The ID of the message to be deleted
+     * @param userId    The ID of the user attempting to delete the message
+     */
     public void deleteMessage(int messageId, int userId) {
         String query = "UPDATE messages SET is_deleted_receiver = true WHERE message_id = ? AND receiver_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -138,7 +189,12 @@ public class OnLimeDB {
     }
 
 
-
+    /**
+     * Retrieves the username of the message receiver from the database based on the provided sender's username.
+     *
+     * @param senderUsername The username of the message sender
+     * @return The username of the message receiver, or null if not found
+     */
     public String getReceiverUsername(String senderUsername) {
         String query = "SELECT receiver_id FROM messages WHERE sender_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -155,6 +211,12 @@ public class OnLimeDB {
         return null;
     }
 
+    /**
+     * Retrieves the username of a user from the database based on the provided user ID.
+     *
+     * @param userId The ID of the user whose username is to be retrieved
+     * @return The username of the user, or null if not found
+     */
     public String getUsernameById(int userId) {
         String query = "SELECT username FROM users WHERE user_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -170,7 +232,9 @@ public class OnLimeDB {
         return null;
     }
 
-
+    /**
+     * Closes the database connection if it is open.
+     */
     public void closeConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
