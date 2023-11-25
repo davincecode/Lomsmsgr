@@ -3,21 +3,34 @@ package controller;
 import database.OnLimeDB;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 public class LoginFormController {
     public javafx.scene.control.TextField txtName;
     public javafx.scene.control.TextField txtNameP;
+
     private OnLimeDB onLimeDB;
+    private Encryptor encryptor;
+
+    @FXML
+    private CheckBox showPassword;
+    @FXML
+    private TextField passwordTextField;
 
     public void initialize() {
+
         onLimeDB = new OnLimeDB();
+        encryptor = new Encryptor();
     }
 
     public void logInButtonOnAction(ActionEvent actionEvent) throws IOException {
@@ -66,11 +79,30 @@ public class LoginFormController {
         String username = txtName.getText();
         String password = txtNameP.getText();
 
-        boolean accountCreated = onLimeDB.createAccount(username, password);
-        if (accountCreated) {
-            new Alert(Alert.AlertType.INFORMATION, "Account created successfully").show();
+        try {
+            String encryptedPassword = encryptor.encryptString(password);
+            boolean accountCreated = onLimeDB.createAccount(username, encryptedPassword);
+            if (accountCreated) {
+                new Alert(Alert.AlertType.INFORMATION, "Account created successfully").show();
+            } else {
+                new Alert(Alert.AlertType.ERROR, "Failed to create account").show();
+            }
+        } catch (NoSuchAlgorithmException e) {
+            new Alert(Alert.AlertType.ERROR, "Failed to encrypt password").show();
+        }
+    }
+
+    public void changeVisibility(ActionEvent actionEvent) {
+        if (showPassword.isSelected()) {
+            // Show password as plain text
+            passwordTextField.setText(txtNameP.getText());
+            passwordTextField.setVisible(true);
+            txtNameP.setVisible(false);
         } else {
-            new Alert(Alert.AlertType.ERROR, "Failed to create account").show();
+            // Hide password (show asterisks)
+            txtNameP.setText(passwordTextField.getText());
+            txtNameP.setVisible(true);
+            passwordTextField.setVisible(false);
         }
     }
 }
