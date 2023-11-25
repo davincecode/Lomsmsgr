@@ -1,15 +1,15 @@
 package controller;
 
-import com.jfoenix.controls.JFXListView;
 import database.OnLimeDB;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -18,112 +18,75 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import server.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.URL;
+import java.net.SocketException;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.ResourceBundle;
 
-public class ClientFormController implements Initializable {
-    public Text txtLabel;
-    public Text txtLabel1;
+public class ClientFormController {
     public AnchorPane pane;
-    public ScrollPane scrollPain;
+    public ScrollPane scrollPane;
     public VBox vBox;
     public TextField txtMsg;
-    public JFXListView<String> usersList;
-
-
+    public Text txtLabel;
+    private static int userId;
+    private OnLimeDB onLimeDB;
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
-    private String clientName = "Client";
-    private Server server;
-    private OnLimeDB databaseConnector;
-    private String receiverUsername;
+    private StringProperty clientNameProperty = new SimpleStringProperty("Client");
 
-    public void updateUsersList() {
-        List<String> loggedInUsers = server.getLoggedInUsers();
-        usersList.getItems().clear();
-        usersList.getItems().addAll(loggedInUsers);
-        usersList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+    @FXML
+    private ListView<String> userListView;
 
-            }
-        });
+    public void initialize() {
+        onLimeDB = new OnLimeDB();
+        txtLabel.textProperty().bind(clientNameProperty);
 
-    }
+        // Fetch the userId when initializing the controller
+        String username = "yourUsername";
+        userId = onLimeDB.getUserId(username);
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        txtLabel.setText(clientName);
-        txtLabel1.setText(clientName);
+        new Thread(() -> {
+            try {
+                socket = new Socket("localhost", 3001);
+                dataInputStream = new DataInputStream(socket.getInputStream());
+                dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                System.out.println("Client connected");
+                ServerFormController.receiveMessage(clientNameProperty.get() + " joined.");
 
-        databaseConnector = new OnLimeDB();
-//        User selectedUser = getSelectedUser();
-//        receiverUsername = selectedUser.getUsername();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    socket = new Socket("localhost", 3001);
-                    dataInputStream = new DataInputStream(socket.getInputStream());
-                    dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                    System.out.println("Client connected");
-                    ServerFormController.receiveMessage(clientName+" joined.");
-
-                    while (socket.isConnected()){
+                while (socket.isConnected() && !socket.isClosed()) {
+                    try {
                         String receivingMsg = dataInputStream.readUTF();
-                        receiveMessage(receivingMsg, ClientFormController.this.vBox);
+                        receiveMessage(receivingMsg, this.vBox, new OnLimeDB(), 0);
+                    } catch (SocketException e) {
+                        System.out.println("Socket was closed, exiting read loop");
+                        break;
                     }
-                }catch (IOException e){
-                    e.printStackTrace();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }).start();
 
-        this.vBox.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
-                scrollPain.setVvalue((Double) newValue);
-            }
-        });
-
-        try {
-            server = Server.getInstance();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Listener for the list of logged-in users
-        server.getLoggedInUsers().addListener(new ListChangeListener<String>() {
-            @Override
-            public void onChanged(Change<? extends String> change) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateUsersList();
-                    }
-                });
-            }
-        });
-
-        updateUsersList();
-
+        this.vBox.heightProperty().addListener((observableValue, oldValue, newValue) ->
+                scrollPane.setVvalue((Double) newValue));
     }
 
     public void shutdown() {
-        // cleanup code here...
-        ServerFormController.receiveMessage(clientName+" left.");
+        try {
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ServerFormController.receiveMessage(clientNameProperty.get() + " left.");
     }
 
     public void txtMsgOnAction(ActionEvent actionEvent) {
@@ -131,15 +94,12 @@ public class ClientFormController implements Initializable {
     }
 
     public void sendButtonOnAction(ActionEvent actionEvent) {
-//        String receiverUsername = databaseConnector.getReceiverUsername(clientName);
-        System.out.println("Sender: " + clientName); // Debug print
-        System.out.println("Receiver: " + receiverUsername); // Debug print
-        sendMsg(txtMsg.getText(), receiverUsername);
+        sendMsg(txtMsg.getText());
     }
 
+    private void sendMsg(String msgToSend) {
+        if (!msgToSend.isEmpty()) {
 
-    private void sendMsg(String msgToSend, String receiverUsername) {
-        if (!msgToSend.isEmpty()){
             HBox hBox = new HBox();
             hBox.setAlignment(Pos.CENTER_RIGHT);
             hBox.setPadding(new Insets(5, 5, 0, 10));
@@ -167,12 +127,11 @@ public class ClientFormController implements Initializable {
             vBox.getChildren().add(hBoxTime);
 
             try {
-                dataOutputStream.writeUTF(clientName + "-" + msgToSend);
+                dataOutputStream.writeUTF(clientNameProperty.get() + "-" + msgToSend);
                 dataOutputStream.flush();
 
                 // Store the message in the database
-                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                databaseConnector.storeMessageInDB(clientName, receiverUsername, msgToSend, timestamp);
+                onLimeDB.storeMessageInDB(clientNameProperty.get(), null, msgToSend, new Timestamp(System.currentTimeMillis()), 1);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -181,13 +140,13 @@ public class ClientFormController implements Initializable {
         }
     }
 
-    public static void receiveMessage(String msg, VBox vBox) throws IOException {
+    public void receiveMessage(String msg, VBox vBox, OnLimeDB onLimeDB, int messageId) throws IOException {
         String name = msg.split("-")[0];
         String msgFromServer = msg.split("-")[1];
 
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER_LEFT);
-        hBox.setPadding(new Insets(5,5,5,10));
+        hBox.setPadding(new Insets(5, 5, 5, 10));
 
         HBox hBoxName = new HBox();
         hBoxName.setAlignment(Pos.CENTER_LEFT);
@@ -198,22 +157,26 @@ public class ClientFormController implements Initializable {
         Text text = new Text(msgFromServer);
         TextFlow textFlow = new TextFlow(text);
         textFlow.setStyle("-fx-background-color: #abb8c3; -fx-font-weight: bold; -fx-background-radius: 20px");
-        textFlow.setPadding(new Insets(5,10,5,10));
-        text.setFill(Color.color(0,0,0));
+        textFlow.setPadding(new Insets(5, 10, 5, 10));
+        text.setFill(Color.color(0, 0, 0));
 
         hBox.getChildren().add(textFlow);
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                vBox.getChildren().add(hBoxName);
-                vBox.getChildren().add(hBox);
-            }
+        Button deleteButton = new Button("Delete");
+        deleteButton.setOnAction(event -> {
+            onLimeDB.deleteMessage(messageId, userId);
+            vBox.getChildren().remove(hBox);
+        });
+
+        hBox.getChildren().add(deleteButton);
+
+        Platform.runLater(() -> {
+            vBox.getChildren().add(hBoxName);
+            vBox.getChildren().add(hBox);
         });
     }
 
     public void setClientName(String name) {
-        clientName = name;
+        clientNameProperty.set(name);
     }
-
 }

@@ -2,6 +2,7 @@ package client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
@@ -19,15 +20,14 @@ public class ClientHandler {
             this.clients = clients;
             this.dataInputStream = new DataInputStream(socket.getInputStream());
             this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while (socket.isConnected()) {
+        new Thread(() -> {
+            try {
+                while (socket.isConnected()) {
+                    try {
                         msg = dataInputStream.readUTF();
                         for (ClientHandler clientHandler : clients) {
                             if (clientHandler.socket.getPort() != socket.getPort()) {
@@ -35,11 +35,21 @@ public class ClientHandler {
                                 clientHandler.dataOutputStream.flush();
                             }
                         }
+                    } catch (EOFException e) {
+                        // Handle EOFException (client disconnected)
+                        handleClientDisconnect();
+                        break;
                     }
-                }catch (IOException e){
-                    e.printStackTrace();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }).start();
+    }
+
+    private void handleClientDisconnect() {
+        System.out.println("Client disconnected: " + socket);
+        clients.remove(this); // Remove this client from the list
+        // Perform any additional cleanup or notification as needed
     }
 }
