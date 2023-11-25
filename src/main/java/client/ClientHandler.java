@@ -1,3 +1,4 @@
+// New
 package client;
 
 import controller.ClientFormController;
@@ -17,10 +18,11 @@ public class ClientHandler {
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private String msg = "";
-    private VBox vBox;
+    private String clientName;
+    public VBox vBox;
+    private VBox vBoxDM;
     private ClientFormController clientFormController;
     private List<ClientHandler> allClients;
-    private String clientName;
     public String getClientName() {
         return this.clientName;
     }
@@ -30,6 +32,7 @@ public class ClientHandler {
             this.socket = socket;
             this.clients = clients;
             this.vBox = vBox;
+            this.vBoxDM = vBoxDM;
             this.clientName = clientName;
             this.allClients = allClients;
             this.clientFormController = clientFormController;
@@ -84,43 +87,33 @@ public class ClientHandler {
         try {
             while (socket.isConnected()) {
                 String receivingMsg = dataInputStream.readUTF();
-                if (receivingMsg.startsWith("BROADCAST-")) {
+                String[] parts = receivingMsg.split("-");
+                if (parts.length >= 3) {
+                    // Direct message
+                    String senderName = parts[0];
+                    String receiverName = parts[1];
+                    String msg = parts[2];
+                    if (clientName.equals(receiverName)) {
+                        // This client is the receiver of the message
+                        Platform.runLater(() -> {
+                            try {
+                                clientFormController.receiveMessage(senderName + ": " + msg, clientFormController.vBoxDM);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                } else if (parts.length == 2 && parts[1].equals("BROADCAST")) {
                     // Broadcast message
-                    String msg = receivingMsg.substring(10);
-                    String senderName = msg.split("-")[0];
-                    String actualMsg = msg.substring(senderName.length() + 1); // Remove the sender's name from the message
+                    String senderName = parts[0];
+                    String msg = parts[1];
                     Platform.runLater(() -> {
                         try {
-                            clientFormController.receiveMessage(senderName + ": " + actualMsg, vBox);
+                            clientFormController.receiveMessage(senderName + ": " + msg, clientFormController.vBox);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     });
-                } else {
-                    // Direct message
-                    String[] parts = receivingMsg.split("-");
-                    if (parts.length == 3) {
-                        String senderName = parts[0];
-                        String receiverName = parts[1];
-                        String msg = parts[2];
-                        if (clientName.equals(receiverName)) {
-                            // This client is the receiver of the message
-                            Platform.runLater(() -> {
-                                try {
-                                    clientFormController.receiveMessage(senderName + ": " + msg, vBox);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                        }
-                        // Find the ClientHandler for the receiver and call its receiveMessage method
-                        for (ClientHandler client : allClients) {
-                            if (client.getClientName().equals(receiverName)) {
-                                client.receiveMessage(senderName + ": " + msg);
-                                break;
-                            }
-                        }
-                    }
                 }
             }
         } catch (IOException e) {
@@ -137,18 +130,15 @@ public class ClientHandler {
         System.out.println("vBox before: " + vBox.getChildren()); // Print the state of vBox before adding the message
 
         Platform.runLater(() -> {
-            if (message.startsWith("BROADCAST-")) {
+            if (message.contains("BROADCAST-")) {
                 // Broadcast message
-                String msg = message.substring(10); // Remove "BROADCAST-" from the start of the message
-                String senderName = msg.split("-")[0]; // Extract the sender's name
-                String actualMsg = msg.substring(senderName.length() + 1); // Remove the sender's name from the message
-                ServerFormController.receiveMessage(senderName + ": " + actualMsg);
-                for (ClientHandler client : allClients) {
-                    try {
-                        ClientFormController.receiveMessage(senderName + ": " + actualMsg, client.vBox);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                String[] parts = message.split("-");
+                String senderName = parts[0]; // Extract the sender's name
+                String msg = parts[2]; // Extract the message
+                try {
+                    ClientFormController.receiveMessage(senderName + ": " + msg, vBox);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             } else {
                 // Direct message

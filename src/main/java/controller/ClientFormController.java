@@ -11,8 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -35,6 +34,7 @@ import java.util.ResourceBundle;
 
 
 public class ClientFormController implements Initializable {
+    public AnchorPane directMessagePane;
     public Text txtLabelAllMessageUR;
     public Text txtLabelAllMessageBL;
     public AnchorPane pane;
@@ -44,6 +44,7 @@ public class ClientFormController implements Initializable {
     public JFXListView<String> usersList;
     public TextField txtMsgDM;
     public JFXListView<String> usersListDM;
+    public VBox vBoxDM;
 
 
     private Socket socket;
@@ -171,6 +172,28 @@ public class ClientFormController implements Initializable {
         String clickedUsername = usersListDM.getSelectionModel().getSelectedItem();
         // Set the receiverUsername to the clicked username
         receiverUsername = clickedUsername;
+
+        // Create a new Label with the clicked username as the text
+        Label usernameLabel = new Label(clickedUsername);
+
+        // Create a new Button and set its onAction attribute to a method that will handle the button click
+        Button button = new Button("Click me");
+        button.setOnAction(e -> handleButtonClick());
+
+        // Add the Label and Button to the AnchorPane
+        directMessagePane.getChildren().addAll(usernameLabel, button);
+
+    }
+
+    private void handleButtonClick() {
+        // Get the message from the txtMsgDM TextField
+        String msgToSend = txtMsgDM.getText();
+
+        // Send the message to the receiver
+        sendMsg(msgToSend, receiverUsername);
+
+        // Clear the txtMsgDM TextField
+        txtMsgDM.clear();
     }
 
     public void shutdown() {
@@ -187,6 +210,9 @@ public class ClientFormController implements Initializable {
         String clickedUsername = usersList.getSelectionModel().getSelectedItem();
         // Set the receiverUsername to the clicked username
         receiverUsername = clickedUsername;
+
+        // Add the clicked username to the usersListDM ListView
+        usersListDM.getItems().add(clickedUsername);
     }
 
     /*
@@ -259,7 +285,8 @@ public class ClientFormController implements Initializable {
                     dataOutputStream.writeUTF(clientName + "-" + receiverUsername + "-" + msgToSend);
                 } else {
                     // Broadcast the message to all users
-                    dataOutputStream.writeUTF(clientName + "-" + msgToSend);
+                    // Include the sender's username in the message
+                    dataOutputStream.writeUTF(clientName + "-BROADCAST-" + msgToSend);
                 }
                 dataOutputStream.flush();
 

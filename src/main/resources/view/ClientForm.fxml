@@ -157,7 +157,7 @@
             </Tab>
             <Tab text="Direct Message">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <AnchorPane fx:id="directMessagePane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <ScrollPane fx:id="chatBoxDM" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
                            <content>
