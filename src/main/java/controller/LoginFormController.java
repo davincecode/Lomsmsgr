@@ -16,8 +16,10 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 public class LoginFormController {
-    public javafx.scene.control.TextField txtName;
-    public javafx.scene.control.TextField txtNameP;
+    @FXML
+    public TextField txtName;
+    @FXML
+    public TextField txtNameP;
 
     private OnLimeDB onLimeDB;
     private Encryptor encryptor;
@@ -89,6 +91,12 @@ public class LoginFormController {
         }
     }
 
+    /*
+    *
+    * This method is used to create an account
+    * @param actionEvent
+    *
+    */
     public void createAccountOnAction(ActionEvent actionEvent) {
         String username = txtName.getText();
         String password = txtNameP.getText();

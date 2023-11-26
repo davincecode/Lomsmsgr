@@ -44,8 +44,10 @@ public class ClientFormController {
     private DataOutputStream dataOutputStream;
     private StringProperty clientNameProperty = new SimpleStringProperty("Client");
 
+//    @FXML
+//    private ListView<String> userListView;
     @FXML
-    private ListView<String> userListView;
+    private ListView<String> usersList;
 
     public void initialize() {
         onLimeDB = new OnLimeDB();
@@ -199,5 +201,7 @@ public class ClientFormController {
 
     public void setClientName(String name) {
         clientNameProperty.set(name);
+        // Adds the logged-in user to the usersList
+        Platform.runLater(() -> usersList.getItems().add(name));
     }
 }
