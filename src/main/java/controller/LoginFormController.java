@@ -58,6 +58,8 @@ public class LoginFormController {
                         ClientFormController controller = fxmlLoader.getController();
                         // controller.setClientName(txtName.getText());
                         controller.setClientName(username);
+                        // Call after the user has logged in
+                        // controller.userLoggedIn(username);
 
                         // Set up the new stage
                         primaryStage.setScene(new Scene(root));
@@ -114,6 +116,12 @@ public class LoginFormController {
         }
     }
 
+    /*
+    *
+    * Hide and Show password text field
+    * @param actionEvent
+    *
+     */
     public void changeVisibility(ActionEvent actionEvent) {
         if (showPassword.isSelected()) {
             // Show password as plain text
