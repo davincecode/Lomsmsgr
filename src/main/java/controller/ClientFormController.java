@@ -4,6 +4,7 @@ import database.OnLimeDB;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -12,12 +13,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import server.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -27,13 +30,17 @@ import java.net.SocketException;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class ClientFormController {
     public AnchorPane pane;
     public ScrollPane scrollPane;
     public VBox vBox;
     public TextField txtMsg;
-    public Text txtLabel;
+    public Text txtLabelUR;
+    public Text txtLabelBL;
+
+    private Server server;
     private static int userId;
     private OnLimeDB onLimeDB;
     private Socket socket;
@@ -42,16 +49,58 @@ public class ClientFormController {
     private StringProperty clientNameProperty = new SimpleStringProperty("Client");
 
     @FXML
-    private ListView<String> userListView;
+    private ListView<String> usersList;
 
+    /**
+     * Initializes the client controller, establishes a connection to the server, and sets up the user interface.
+     */
     public void initialize() {
         onLimeDB = new OnLimeDB();
-        txtLabel.textProperty().bind(clientNameProperty);
 
         // Fetch the userId when initializing the controller
-        String username = "yourUsername";
+        txtLabelUR.textProperty().bind(clientNameProperty);
+        txtLabelBL.textProperty().bind(clientNameProperty);
+
+
+        // Fetch the userId when initializing the controller
+        String username = "username";
         userId = onLimeDB.getUserId(username);
 
+        try {
+            server = Server.getInstance();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Get all usernames from the database and add them to the usersList
+        List<String> allUsernames = onLimeDB.getAllUsernames();
+        usersList.getItems().addAll(allUsernames);
+
+        // Add a listener to the loggedInUsers list in the server
+        server.getLoggedInUsers().addListener((ListChangeListener<String>) change -> {
+            // Update the usersList on the JavaFX application thread
+            Platform.runLater(() -> {
+                updateUsersList();
+            });
+        });
+
+        // Listener for the list of logged-in users
+        server.getLoggedInUsers().addListener(new ListChangeListener<String>() {
+            @Override
+            public void onChanged(Change<? extends String> change) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateUsersList();
+                    }
+                });
+            }
+        });
+
+        // Update the users list when the client form is created
+        updateUsersList();
+
+        // Thread to connect to the server
         new Thread(() -> {
             try {
                 socket = new Socket("localhost", 3001);
@@ -59,6 +108,8 @@ public class ClientFormController {
                 dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 System.out.println("Client connected");
                 ServerFormController.receiveMessage(clientNameProperty.get() + " joined.");
+                // debug print
+                System.out.println("CLIENT NAME" + clientNameProperty.get());
 
                 while (socket.isConnected() && !socket.isClosed()) {
                     try {
@@ -78,6 +129,10 @@ public class ClientFormController {
                 scrollPane.setVvalue((Double) newValue));
     }
 
+
+    /**
+     * Shuts down the client when the user closes the window.
+     */
     public void shutdown() {
         try {
             if (socket != null && !socket.isClosed()) {
@@ -86,17 +141,33 @@ public class ClientFormController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ServerFormController.receiveMessage(clientNameProperty.get() + " left.");
+
+        ServerFormController.receiveMessage(clientNameProperty.get() + " left the chat.");
     }
 
+    /**
+     * Handles the action event when the user presses the Enter key in the message text field.
+     *
+     * @param actionEvent The ActionEvent triggered by pressing the Enter key.
+     */
     public void txtMsgOnAction(ActionEvent actionEvent) {
         sendButtonOnAction(actionEvent);
     }
 
+    /**
+     * Handles the action event when the user clicks the send button.
+     *
+     * @param actionEvent The ActionEvent triggered by clicking the send button.
+     */
     public void sendButtonOnAction(ActionEvent actionEvent) {
         sendMsg(txtMsg.getText());
     }
 
+    /**
+     * Sends a message to the server.
+     *
+     * @param msgToSend The message to send.
+     */
     private void sendMsg(String msgToSend) {
         if (!msgToSend.isEmpty()) {
 
@@ -140,6 +211,15 @@ public class ClientFormController {
         }
     }
 
+    /**
+     * Receives a message from the server and updates the client's UI.
+     *
+     * @param msg       The received message.
+     * @param vBox      The VBox containing the chat messages.
+     * @param onLimeDB  The database manager for storing messages.
+     * @param messageId The ID of the received message.
+     * @throws IOException If an I/O error occurs during message processing.
+     */
     public void receiveMessage(String msg, VBox vBox, OnLimeDB onLimeDB, int messageId) throws IOException {
         String name = msg.split("-")[0];
         String msgFromServer = msg.split("-")[1];
@@ -176,7 +256,40 @@ public class ClientFormController {
         });
     }
 
-    public void setClientName(String name) {
-        clientNameProperty.set(name);
+    /**
+     * Handles the event when the user clicks on a username in the users list.
+     *
+     * @param event The MouseEvent triggered by clicking on a username.
+     */
+    public void clickedUsername(MouseEvent event) {
+        System.out.println("Clicked Username");
+     // Todo: Implement private messaging
     }
+
+
+    /**
+     * Sets the client's username when the user logs in.
+     * It's on the user area where the username is displayed.
+     * @param name The username of the user that logged in.
+     */
+    public void setClientName(String name) {
+        // Set the client's username
+        clientNameProperty.set(name);
+
+    }
+
+    /**
+     * Updates the users list with the currently logged-in users.
+     */
+    public void updateUsersList() {
+        // Get all usernames from the database
+        List<String> allUsernames = onLimeDB.getAllUsernames();
+        Platform.runLater(() -> {
+            // Clear the usersList
+            usersList.getItems().clear();
+            // Add all usernames to the usersList
+            usersList.getItems().addAll(allUsernames);
+        });
+    }
+
 }
