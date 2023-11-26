@@ -1,5 +1,7 @@
 package client;
 
+import server.Server;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -13,13 +15,17 @@ public class ClientHandler {
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private String msg = "";
+    private String username;
+    private Server server;
 
-    public ClientHandler(Socket socket, List<ClientHandler> clients) {
+    public ClientHandler(Socket socket, List<ClientHandler> clients, Server server) {
         try {
+            this.server = server;
             this.socket = socket;
             this.clients = clients;
             this.dataInputStream = new DataInputStream(socket.getInputStream());
             this.dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            server.userLoggedIn(username);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -47,9 +53,10 @@ public class ClientHandler {
         }).start();
     }
 
+    // Handle client disconnect
     private void handleClientDisconnect() {
         System.out.println("Client disconnected: " + socket);
-        clients.remove(this); // Remove this client from the list
-        // Perform any additional cleanup or notification as needed
+        clients.remove(this);
+        server.userLoggedOut(username);
     }
 }

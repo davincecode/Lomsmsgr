@@ -3,6 +3,8 @@ package database;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OnLimeDB {
     private Connection connection;
@@ -230,6 +232,25 @@ public class OnLimeDB {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Retrieves a list of all usernames from the database.
+     *
+     * @return List of all usernames
+     */
+    public List<String> getAllUsernames() {
+        List<String> usernames = new ArrayList<>();
+        String query = "SELECT username FROM users";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                usernames.add(resultSet.getString("username"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usernames;
     }
 
     /**

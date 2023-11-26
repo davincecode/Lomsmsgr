@@ -16,8 +16,10 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 public class LoginFormController {
-    public javafx.scene.control.TextField txtName;
-    public javafx.scene.control.TextField txtNameP;
+    @FXML
+    public TextField txtName;
+    @FXML
+    public TextField txtNameP;
 
     private OnLimeDB onLimeDB;
     private Encryptor encryptor;
@@ -54,11 +56,15 @@ public class LoginFormController {
 
                         // Get the controller associated with the FXML file
                         ClientFormController controller = fxmlLoader.getController();
-                        controller.setClientName(txtName.getText());
+                        // controller.setClientName(txtName.getText());
+                        controller.setClientName(username);
+                        // Call after the user has logged in
+                        // controller.userLoggedIn(username);
 
                         // Set up the new stage
                         primaryStage.setScene(new Scene(root));
-                        primaryStage.setTitle(txtName.getText());
+                        // primaryStage.setTitle(txtName.getText());
+                        primaryStage.setTitle(username);
                         primaryStage.setResizable(false);
                         primaryStage.centerOnScreen();
 
@@ -87,6 +93,12 @@ public class LoginFormController {
         }
     }
 
+    /*
+    *
+    * This method is used to create an account
+    * @param actionEvent
+    *
+    */
     public void createAccountOnAction(ActionEvent actionEvent) {
         String username = txtName.getText();
         String password = txtNameP.getText();
@@ -104,6 +116,12 @@ public class LoginFormController {
         }
     }
 
+    /*
+    *
+    * Hide and Show password text field
+    * @param actionEvent
+    *
+     */
     public void changeVisibility(ActionEvent actionEvent) {
         if (showPassword.isSelected()) {
             // Show password as plain text
