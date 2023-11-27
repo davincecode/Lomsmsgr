@@ -169,6 +169,7 @@ public class ClientFormController {
      * @param msgToSend The message to send.
      */
     private void sendMsg(String msgToSend) {
+        System.out.println("sendMsg method called");
         if (!msgToSend.isEmpty()) {
 
             HBox hBox = new HBox();
@@ -263,7 +264,7 @@ public class ClientFormController {
      */
     public void clickedUsername(MouseEvent event) {
         System.out.println("Clicked Username");
-     // Todo: Implement private messaging
+        // Todo: Implement private messaging
     }
 
 

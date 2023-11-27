@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="pane" prefHeight="580.0" prefWidth="860.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ClientFormController">
+<AnchorPane fx:id="pane" prefHeight="580.0" prefWidth="860.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.ClientFormController">
    <children>
       <ImageView fx:id="imgBackground" fitHeight="580.0" fitWidth="860.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -15,7 +23,7 @@
       </ImageView>
       <TabPane prefHeight="580.0" prefWidth="860.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
          <tabs>
-            <Tab text="All Messages">
+            <Tab text="Home">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -24,7 +32,7 @@
                               <VBox fx:id="vBox" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="txtMsg" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <TextField fx:id="txtMsg" alignment="TOP_LEFT" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
                         <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
@@ -62,7 +70,7 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="tabTitle" layoutX="59.0" layoutY="45.0" text="All Messages">
+                        <Label fx:id="tabTitle" layoutX="60.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>
@@ -77,27 +85,6 @@
                               <Image url="@../img/online-dot.png" />
                            </image>
                         </ImageView>
-                        <Label layoutX="290.0" layoutY="31.0" text="NLIME">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                           <textFill>
-                              <LinearGradient endY="1.0" startX="0.3230403800475059" startY="0.503562945368171">
-                                 <stops>
-                                    <Stop>
-                                       <color>
-                                          <Color red="0.18914473056793213" green="0.9078947305679321" blue="0.3808113932609558" opacity="0.7900000214576721" />
-                                       </color>
-                                    </Stop>
-                                    <Stop offset="1.0">
-                                       <color>
-                                          <Color red="1.0" green="1.0" blue="1.0" />
-                                       </color>
-                                    </Stop>
-                                 </stops>
-                              </LinearGradient>
-                           </textFill>
-                        </Label>
                      </children>
                   </AnchorPane>
                </content>
@@ -111,7 +98,7 @@
                               <VBox fx:id="vBox1" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="txtMsg1" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <TextField fx:id="txtMsg1" alignment="TOP_LEFT" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
                         <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
@@ -149,7 +136,7 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="tabTitle1" layoutX="59.0" layoutY="45.0" text="All Messages">
+                        <Label fx:id="tabTitle1" layoutX="60.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>
@@ -164,27 +151,6 @@
                               <Image url="@../img/online-dot.png" />
                            </image>
                         </ImageView>
-                        <Label layoutX="290.0" layoutY="31.0" text="NLIME">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                           <textFill>
-                              <LinearGradient endY="1.0" startX="0.3230403800475059" startY="0.503562945368171">
-                                 <stops>
-                                    <Stop>
-                                       <color>
-                                          <Color red="0.18914473056793213" green="0.9078947305679321" blue="0.3808113932609558" opacity="0.7900000214576721" />
-                                       </color>
-                                    </Stop>
-                                    <Stop offset="1.0">
-                                       <color>
-                                          <Color red="1.0" green="1.0" blue="1.0" />
-                                       </color>
-                                    </Stop>
-                                 </stops>
-                              </LinearGradient>
-                           </textFill>
-                        </Label>
                      </children>
                   </AnchorPane>
                </content>
@@ -198,7 +164,7 @@
                               <VBox fx:id="vBox11" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="txtMsg11" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <TextField fx:id="txtMsg11" alignment="TOP_LEFT" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
                         <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
@@ -236,7 +202,7 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="tabTitle11" layoutX="59.0" layoutY="45.0" text="All Messages">
+                        <Label fx:id="tabTitle11" layoutX="60.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>
@@ -251,27 +217,6 @@
                               <Image url="@../img/online-dot.png" />
                            </image>
                         </ImageView>
-                        <Label layoutX="290.0" layoutY="31.0" text="NLIME">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                           <textFill>
-                              <LinearGradient endY="1.0" startX="0.3230403800475059" startY="0.503562945368171">
-                                 <stops>
-                                    <Stop>
-                                       <color>
-                                          <Color red="0.18914473056793213" green="0.9078947305679321" blue="0.3808113932609558" opacity="0.7900000214576721" />
-                                       </color>
-                                    </Stop>
-                                    <Stop offset="1.0">
-                                       <color>
-                                          <Color red="1.0" green="1.0" blue="1.0" />
-                                       </color>
-                                    </Stop>
-                                 </stops>
-                              </LinearGradient>
-                           </textFill>
-                        </Label>
                      </children>
                   </AnchorPane>
                </content>
@@ -285,7 +230,7 @@
                               <VBox fx:id="vBox111" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="txtMsg111" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <TextField fx:id="txtMsg111" alignment="TOP_LEFT" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
                         <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
@@ -323,7 +268,7 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="tabTitle111" layoutX="59.0" layoutY="45.0" text="All Messages">
+                        <Label fx:id="tabTitle111" layoutX="60.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>
@@ -338,27 +283,6 @@
                               <Image url="@../img/online-dot.png" />
                            </image>
                         </ImageView>
-                        <Label layoutX="290.0" layoutY="31.0" text="NLIME">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                           <textFill>
-                              <LinearGradient endY="1.0" startX="0.3230403800475059" startY="0.503562945368171">
-                                 <stops>
-                                    <Stop>
-                                       <color>
-                                          <Color red="0.18914473056793213" green="0.9078947305679321" blue="0.3808113932609558" opacity="0.7900000214576721" />
-                                       </color>
-                                    </Stop>
-                                    <Stop offset="1.0">
-                                       <color>
-                                          <Color red="1.0" green="1.0" blue="1.0" />
-                                       </color>
-                                    </Stop>
-                                 </stops>
-                              </LinearGradient>
-                           </textFill>
-                        </Label>
                      </children>
                   </AnchorPane>
                </content>
