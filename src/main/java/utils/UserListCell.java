@@ -5,14 +5,19 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 public class UserListCell extends ListCell<String> {
 
     private ListView<String> friendsList;
     private ListView<String> directMessage;
+    private DataOutputStream dataOutputStream;
 
-    public UserListCell(ListView<String> friendsList, ListView<String> directMessage) {
+    public UserListCell(ListView<String> friendsList, ListView<String> directMessage, DataOutputStream dataOutputStream) {
         this.friendsList = friendsList;
         this.directMessage = directMessage;
+        this.dataOutputStream = dataOutputStream;
     }
 
     @Override
@@ -42,15 +47,22 @@ public class UserListCell extends ListCell<String> {
     }
 
     private void handleButtonClick(String username, String buttonLabel) {
-        // Handle the button click for the specified username and button label
         if ("Add Friend".equals(buttonLabel)) {
-            // Perform actions for Add Friend button
             System.out.println("Adding " + username + " as a friend.");
-            friendsList.getItems().add(username);
+            if (!friendsList.getItems().contains(username)) {
+                friendsList.getItems().add(username);
+            }
         } else if ("Message".equals(buttonLabel)) {
-            // Perform actions for Message button
             System.out.println("Sending a message to " + username);
-            directMessage.getItems().add(username);
+            if (!directMessage.getItems().contains(username)) {
+                directMessage.getItems().add(username);
+            }
+            try {
+                dataOutputStream.writeUTF(username + ": " + "Your message here");
+                dataOutputStream.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

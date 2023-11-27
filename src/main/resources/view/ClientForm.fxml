@@ -21,9 +21,9 @@
             <Image url="@../img/imgBackground.jpg" />
          </image>
       </ImageView>
-      <TabPane prefHeight="580.0" prefWidth="900.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" prefHeight="580.0" prefWidth="900.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
          <tabs>
-            <Tab text="Home">
+            <Tab fx:id="home" text="Home">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="602.0" prefWidth="886.0">
                      <children>
