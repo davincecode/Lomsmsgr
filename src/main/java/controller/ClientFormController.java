@@ -263,7 +263,7 @@ public class ClientFormController {
      */
     public void clickedUsername(MouseEvent event) {
         System.out.println("Clicked Username");
-     // Todo: Implement private messaging
+        // Todo: Implement private messaging
     }
 
 

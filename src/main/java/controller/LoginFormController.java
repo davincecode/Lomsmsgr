@@ -94,11 +94,11 @@ public class LoginFormController {
     }
 
     /*
-    *
-    * This method is used to create an account
-    * @param actionEvent
-    *
-    */
+     *
+     * This method is used to create an account
+     * @param actionEvent
+     *
+     */
     public void createAccountOnAction(ActionEvent actionEvent) {
         String username = txtName.getText();
         String password = txtNameP.getText();
@@ -117,10 +117,10 @@ public class LoginFormController {
     }
 
     /*
-    *
-    * Hide and Show password text field
-    * @param actionEvent
-    *
+     *
+     * Hide and Show password text field
+     * @param actionEvent
+     *
      */
     public void changeVisibility(ActionEvent actionEvent) {
         if (showPassword.isSelected()) {
