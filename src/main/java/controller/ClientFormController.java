@@ -21,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import server.Server;
+import utils.UserListCell;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -50,6 +51,10 @@ public class ClientFormController {
 
     @FXML
     private ListView<String> usersList;
+    @FXML
+    private ListView<String> friendsList;
+    @FXML
+    private ListView<String> directMessage;
 
     /**
      * Initializes the client controller, establishes a connection to the server, and sets up the user interface.
@@ -75,6 +80,11 @@ public class ClientFormController {
         // Get all usernames from the database and add them to the usersList
         List<String> allUsernames = onLimeDB.getAllUsernames();
         usersList.getItems().addAll(allUsernames);
+
+        // Adds buttons to the users list
+        // usersList.setCellFactory(param -> new UserListCell(usersList));
+        // Adds users to friends and message list
+        usersList.setCellFactory(param -> new UserListCell(friendsList, directMessage));
 
         // Add a listener to the loggedInUsers list in the server
         server.getLoggedInUsers().addListener((ListChangeListener<String>) change -> {
