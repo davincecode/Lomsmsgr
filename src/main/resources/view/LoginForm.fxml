@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.LoginFormController">
+<AnchorPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginFormController">
     <VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" styleClass="login-scene-bg">
         <Label contentDisplay="CENTER" styleClass="login-title" stylesheets="@styles.css" text="WELCOME TO OFFLIME CHATTER" textAlignment="CENTER" textFill="WHITE">
         </Label>

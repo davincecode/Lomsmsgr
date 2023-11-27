@@ -53,12 +53,20 @@ public class OnLimeDB {
     }
 
     /**
-     * Creates a new account in the database
-     * @param username The username of the new account
-     * @param encryptedPassword The encrypted password of the new account
+     * Creates a new account in the database if the username doesn't already exist.
+     *
+     * @param username           The username of the new account
+     * @param encryptedPassword  The encrypted password of the new account
      * @return true if the account was created successfully, false otherwise
      */
     public boolean createAccount(String username, String encryptedPassword) {
+        // Check if the username already exists
+        if (usernameExists(username)) {
+            System.out.println("Username already exists: " + username);
+            return false;
+        }
+
+        // If the username doesn't exist, insert the new user
         String query = "INSERT INTO users (username, password) VALUES (?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
@@ -70,6 +78,26 @@ public class OnLimeDB {
         }
         return false;
     }
+
+    /**
+     * Checks if the username exists in the database.
+     *
+     * @param username The username to check
+     * @return true if the username exists, false otherwise
+     */
+    private boolean usernameExists(String username) {
+        String query = "SELECT 1 FROM users WHERE username = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, username);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next(); // Returns true if the username exists, false otherwise
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     /**
      * Checks if the username exists in the database
@@ -165,7 +193,9 @@ public class OnLimeDB {
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, teamId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next(); // Returns true if the teamId exists, false otherwise
+                boolean teamExists = resultSet.next(); // Returns true if the teamId exists, false otherwise
+                System.out.println("teamId: " + teamId + ", teamExists: " + teamExists); // Debug print
+                return teamExists;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -266,4 +296,5 @@ public class OnLimeDB {
             e.printStackTrace();
         }
     }
+
 }
