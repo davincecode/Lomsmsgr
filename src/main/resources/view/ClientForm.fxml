@@ -14,26 +14,26 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="pane" prefHeight="580.0" prefWidth="860.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controller.ClientFormController">
+<AnchorPane fx:id="pane" prefHeight="580.0" prefWidth="900.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ClientFormController">
    <children>
-      <ImageView fx:id="imgBackground" fitHeight="580.0" fitWidth="860.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="imgBackground" fitHeight="580.0" fitWidth="900.0" pickOnBounds="true">
          <image>
             <Image url="@../img/imgBackground.jpg" />
          </image>
       </ImageView>
-      <TabPane prefHeight="580.0" prefWidth="860.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" prefHeight="580.0" prefWidth="900.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
          <tabs>
-            <Tab text="Home">
+            <Tab fx:id="home" text="Home">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="602.0" prefWidth="886.0">
                      <children>
-                        <ScrollPane fx:id="scrollPane" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
+                        <ScrollPane fx:id="scrollPane" layoutX="289.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
                            <content>
                               <VBox fx:id="vBox" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="txtMsg" alignment="TOP_LEFT" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
-                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                        <TextField fx:id="txtMsg" alignment="TOP_LEFT" layoutX="290.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="749.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #9acad6; -fx-border-radius: 10px; -fx-background-radius: 10px;">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -58,7 +58,7 @@
                            </image>
                         </ImageView>
                         <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
-                        <ListView fx:id="usersList" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="218.0" />
+                        <ListView fx:id="usersList" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="264.0" />
                         <Text fx:id="txtLabelBL" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
                            <font>
                               <Font name="Bell MT Bold" size="20.0" />
@@ -70,7 +70,7 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="tabTitle" layoutX="60.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
+                        <Label fx:id="tabTitle" layoutX="83.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>
@@ -89,17 +89,17 @@
                   </AnchorPane>
                </content>
             </Tab>
-            <Tab text="Friends">
+            <Tab fx:id="addFriends" text="Friends">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="602.0" prefWidth="886.0">
                      <children>
-                        <ScrollPane fx:id="scrollPane1" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
+                        <ScrollPane fx:id="scrollPaneFriends" layoutX="289.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
                            <content>
-                              <VBox fx:id="vBox1" prefHeight="422.0" prefWidth="566.0" />
+                              <VBox fx:id="vBoxFriends" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="txtMsg1" alignment="TOP_LEFT" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
-                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                        <TextField fx:id="txtMsgFriends" alignment="TOP_LEFT" layoutX="290.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="749.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #9acad6; -fx-border-radius: 10px; -fx-background-radius: 10px;">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -124,7 +124,7 @@
                            </image>
                         </ImageView>
                         <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
-                        <ListView fx:id="usersList1" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="218.0" />
+                        <ListView fx:id="friendsList" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="264.0" />
                         <Text fx:id="txtLabelBL1" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
                            <font>
                               <Font name="Bell MT Bold" size="20.0" />
@@ -136,7 +136,7 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="tabTitle1" layoutX="60.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
+                        <Label fx:id="tabTitle1" layoutX="83.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>
@@ -155,17 +155,17 @@
                   </AnchorPane>
                </content>
             </Tab>
-            <Tab text="Direct Message">
+            <Tab fx:id="directMsg" text="Direct Message">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <AnchorPane fx:id="directMsgAnchor" minHeight="0.0" minWidth="0.0" prefHeight="602.0" prefWidth="886.0">
                      <children>
-                        <ScrollPane fx:id="scrollPane11" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
+                        <ScrollPane fx:id="scrollPaneDM" layoutX="289.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
                            <content>
-                              <VBox fx:id="vBox11" prefHeight="422.0" prefWidth="566.0" />
+                              <VBox fx:id="vBoxDM" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="txtMsg11" alignment="TOP_LEFT" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
-                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                        <TextField fx:id="txtMsgDM" alignment="TOP_LEFT" layoutX="290.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="749.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #9acad6; -fx-border-radius: 10px; -fx-background-radius: 10px;">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -179,7 +179,7 @@
                               <Font name="Harlow Solid Italic" size="14.0" />
                            </font>
                         </Text>
-                        <Text fx:id="txtLabelUR11" fill="WHITE" layoutX="680.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                        <Text fx:id="txtLabelURDM" fill="WHITE" layoutX="680.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
                            <font>
                               <Font name="Bell MT Bold" size="20.0" />
                            </font>
@@ -190,8 +190,8 @@
                            </image>
                         </ImageView>
                         <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
-                        <ListView fx:id="usersList11" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="218.0" />
-                        <Text fx:id="txtLabelBL11" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                        <ListView fx:id="directMessage" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="264.0" />
+                        <Text fx:id="txtLabelBLDM" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
                            <font>
                               <Font name="Bell MT Bold" size="20.0" />
                            </font>
@@ -202,7 +202,7 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="tabTitle11" layoutX="60.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
+                        <Label fx:id="tabTitleDM" layoutX="83.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>
@@ -223,15 +223,15 @@
             </Tab>
             <Tab text="Settings">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="602.0" prefWidth="886.0">
                      <children>
-                        <ScrollPane fx:id="scrollPane111" layoutX="246.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
+                        <ScrollPane fx:id="scrollPane111" layoutX="289.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
                            <content>
                               <VBox fx:id="vBox111" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="txtMsg111" alignment="TOP_LEFT" layoutX="247.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
-                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="706.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #f5f5f5; -fx-border-color: #f5f5f5; -fx-border-radius: 10px;">
+                        <TextField fx:id="txtMsg111" alignment="TOP_LEFT" layoutX="290.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
+                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="749.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #9acad6; -fx-border-radius: 10px; -fx-background-radius: 10px;">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -256,7 +256,7 @@
                            </image>
                         </ImageView>
                         <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
-                        <ListView fx:id="usersList111" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="218.0" />
+                        <ListView fx:id="usersList111" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="264.0" />
                         <Text fx:id="txtLabelBL111" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
                            <font>
                               <Font name="Bell MT Bold" size="20.0" />
@@ -268,7 +268,7 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="tabTitle111" layoutX="60.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
+                        <Label fx:id="tabTitle111" layoutX="83.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>

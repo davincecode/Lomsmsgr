@@ -127,60 +127,90 @@ public class OnLimeDB {
      * @param receiverUsername  The username of the message receiver (null for broadcast messages)
      * @param message           The text content of the message
      * @param timestamp         The timestamp of the message
-     * @param teamId            The ID of the team associated with the message
      */
-    public void storeMessageInDB(String senderUsername, String receiverUsername, String message, Timestamp timestamp, int teamId) {
+    public void storeMessageInDB(String senderUsername, String receiverUsername, String message, Timestamp timestamp, String messageType) {
         String query;
-        if (teamIdIsValid(teamId)) {
-            if (receiverUsername == null) {
-                // Broadcast message
+        switch (messageType) {
+            case "broadcast":
                 query = "INSERT INTO messages (sender_id, message_text, timestamp, team_id) VALUES (?, ?, ?, ?)";
-            } else {
-                // Direct message
+                break;
+            case "friends":
                 query = "INSERT INTO messages (sender_id, receiver_id, message_text, timestamp, team_id) VALUES (?, ?, ?, ?, ?)";
-            }
+                break;
+            case "direct":
+                query = "INSERT INTO direct_messages (sender_id, receiver_id, message_text, timestamp) VALUES (?, ?, ?, ?)";
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid message type: " + messageType);
+        }
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-                int senderId = getUserId(senderUsername);
-                if (senderId == -1) {
-                    System.out.println("Sender not found in the database");
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            int senderId = getUserId(senderUsername);
+            if (senderId == -1) {
+                System.out.println("Sender not found in the database");
+                return;
+            }
+            preparedStatement.setInt(1, senderId);
+
+            if ("direct".equals(messageType)) {
+                int receiverId = getUserId(receiverUsername);
+                if (receiverId == -1) {
+                    System.out.println("Receiver not found in the database");
                     return;
                 }
-                preparedStatement.setInt(1, senderId);
-                if (receiverUsername != null) {
-                    int receiverId = getUserId(receiverUsername);
-                    if (receiverId == -1) {
-                        System.out.println("Receiver not found in the database");
-                        return;
-                    }
-                    preparedStatement.setInt(2, receiverId);
-                    preparedStatement.setString(3, message);
-                    preparedStatement.setTimestamp(4, timestamp);
-                    preparedStatement.setInt(5, teamId);
-                } else {
-                    preparedStatement.setString(2, message);
-                    preparedStatement.setTimestamp(3, timestamp);
-                    preparedStatement.setInt(4, teamId);
-                }
-
-                System.out.println("Executing SQL Query: " + preparedStatement.toString());
-
-                preparedStatement.executeUpdate();
-
-                // Retrieve the generated message_id
-                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        int messageId = generatedKeys.getInt(1);
-                        System.out.println("Message ID for the inserted message: " + messageId);
-                        // Todo: store this messageId for further use.
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+                preparedStatement.setInt(2, receiverId);
             }
-        } else {
-            System.out.println("Invalid teamId: " + teamId);
+
+            preparedStatement.setString("direct".equals(messageType) ? 3 : 2, message);
+            preparedStatement.setTimestamp("direct".equals(messageType) ? 4 : 3, timestamp);
+
+            if (!"broadcast".equals(messageType)) {
+                // If messageType is not "broadcast", set teamId
+                int teamId = getTeamId(senderUsername); // Assuming you have a method to retrieve teamId for a user
+                preparedStatement.setInt("direct".equals(messageType) ? 5 : 4, teamId);
+            }
+
+            System.out.println("Executing SQL Query: " + preparedStatement.toString());
+
+            preparedStatement.executeUpdate();
+
+            // Retrieve the generated message_id
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int messageId = generatedKeys.getInt(1);
+                    System.out.println("Message ID for the inserted message: " + messageId);
+                    // Todo: store this messageId for further use.
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+    }
+
+    /**
+     * Retrieves the team ID for a user from the database based on the provided username.
+     *
+     * @param username The username of the user
+     * @return The team ID of the user, or -1 if not found
+     */
+    public int getTeamId(String username) {
+        String query = "SELECT team_id FROM user_teams WHERE user_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            int userId = getUserId(username);
+            if (userId == -1) {
+                System.out.println("User not found: " + username);
+                return -1;
+            }
+            preparedStatement.setInt(1, userId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("team_id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     /**
@@ -210,7 +240,7 @@ public class OnLimeDB {
      * @param userId    The ID of the user attempting to delete the message
      */
     public void deleteMessage(int messageId, int userId) {
-        String query = "UPDATE messages SET is_deleted_receiver = true WHERE message_id = ? AND receiver_id = ?";
+        String query = "UPDATE user_messages SET is_deleted = true WHERE message_id = ? AND user_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, messageId);
             preparedStatement.setInt(2, userId);
