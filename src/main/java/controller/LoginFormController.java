@@ -7,9 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -34,6 +32,41 @@ public class LoginFormController {
         onLimeDB = new OnLimeDB();
         encryptor = new Encryptor();
     }
+
+    private void showErrorMessage(String message) {
+        Platform.runLater(() -> {
+            try {
+                // Create a custom dialog
+                Dialog<ButtonType> dialog = new Dialog<>();
+                dialog.setTitle("Error");
+                dialog.setHeaderText(null);
+                dialog.setContentText(message);
+
+                // Set up the dialog content
+                Label contentLabel = new Label(message);
+                contentLabel.setStyle("-fx-alignment: center;");
+                dialog.getDialogPane().setContent(contentLabel);
+
+                // Set width and height
+                dialog.getDialogPane().setPrefWidth(300);
+                dialog.getDialogPane().setPrefHeight(100);
+
+                // Add OK button to the dialog
+                ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+                dialog.getDialogPane().getButtonTypes().add(okButton);
+
+                // Set custom styling for the dialog
+                DialogPane dialogPane = dialog.getDialogPane();
+                // dialogPane.getStylesheets().add(getClass().getResource("../view/styles.css").toExternalForm());
+
+                // Show the dialog and wait for user input
+                dialog.showAndWait();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 
     public void logInButtonOnAction(ActionEvent actionEvent) throws IOException {
         String username = txtName.getText();
@@ -79,26 +112,26 @@ public class LoginFormController {
 
                         txtName.clear();
                     } else {
-                        new Alert(Alert.AlertType.ERROR, "Please enter your name").show();
+                        showErrorMessage("Please enter your name");
                     }
                 } else {
                     // Password does not match, show an error message
-                    new Alert(Alert.AlertType.ERROR, "Incorrect password").show();
+                    showErrorMessage("Incorrect password");
                 }
             } catch (NoSuchAlgorithmException e) {
-                new Alert(Alert.AlertType.ERROR, "Failed to encrypt password").show();
+                showErrorMessage("Failed to encrypt password");
             }
         } else {
-            new Alert(Alert.AlertType.ERROR, "User does not exist").show();
+            showErrorMessage("User does not exist");
         }
     }
 
     /*
-    *
-    * This method is used to create an account
-    * @param actionEvent
-    *
-    */
+     *
+     * This method is used to create an account
+     * @param actionEvent
+     *
+     */
     public void createAccountOnAction(ActionEvent actionEvent) {
         String username = txtName.getText();
         String password = txtNameP.getText();
@@ -109,18 +142,18 @@ public class LoginFormController {
             if (accountCreated) {
                 new Alert(Alert.AlertType.INFORMATION, "Account created successfully").show();
             } else {
-                new Alert(Alert.AlertType.ERROR, "Failed to create account").show();
+                showErrorMessage("Oops! The username " + username + " is already in use." + "\n" + "Please try another one.");
             }
         } catch (NoSuchAlgorithmException e) {
-            new Alert(Alert.AlertType.ERROR, "Failed to encrypt password").show();
+            showErrorMessage("Failed to encrypt password");
         }
     }
 
     /*
-    *
-    * Hide and Show password text field
-    * @param actionEvent
-    *
+     *
+     * Hide and Show password text field
+     * @param actionEvent
+     *
      */
     public void changeVisibility(ActionEvent actionEvent) {
         if (showPassword.isSelected()) {

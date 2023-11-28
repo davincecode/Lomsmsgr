@@ -9,10 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -21,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import server.Server;
+import utils.UserListCell;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -36,6 +34,7 @@ public class ClientFormController {
     public AnchorPane pane;
     public ScrollPane scrollPane;
     public VBox vBox;
+    public VBox vBoxFriends;
     public TextField txtMsg;
     public Text txtLabelUR;
     public Text txtLabelBL;
@@ -50,6 +49,16 @@ public class ClientFormController {
 
     @FXML
     private ListView<String> usersList;
+    @FXML
+    private ListView<String> friendsList;
+    @FXML
+    private ListView<String> directMessage;
+    @FXML
+    private TabPane tabPane;
+    @FXML
+    private Tab addFriends;
+    @FXML
+    private Tab home;
 
     /**
      * Initializes the client controller, establishes a connection to the server, and sets up the user interface.
@@ -75,6 +84,11 @@ public class ClientFormController {
         // Get all usernames from the database and add them to the usersList
         List<String> allUsernames = onLimeDB.getAllUsernames();
         usersList.getItems().addAll(allUsernames);
+
+        // Adds buttons to the users list
+        // usersList.setCellFactory(param -> new UserListCell(usersList));
+        // Adds users to friends and message list
+        usersList.setCellFactory(param -> new UserListCell(friendsList, directMessage, dataOutputStream));
 
         // Add a listener to the loggedInUsers list in the server
         server.getLoggedInUsers().addListener((ListChangeListener<String>) change -> {
@@ -127,6 +141,7 @@ public class ClientFormController {
 
         this.vBox.heightProperty().addListener((observableValue, oldValue, newValue) ->
                 scrollPane.setVvalue((Double) newValue));
+
     }
 
 
@@ -160,7 +175,30 @@ public class ClientFormController {
      * @param actionEvent The ActionEvent triggered by clicking the send button.
      */
     public void sendButtonOnAction(ActionEvent actionEvent) {
-        sendMsg(txtMsg.getText());
+        // Get the selected tab
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+
+        // If the "Friends" tab is selected, send a friends message
+        if (selectedTab == addFriends) {
+            // Get the selected friend from the friendsList
+            String selectedFriend = friendsList.getSelectionModel().getSelectedItem();
+
+            // If a friend is selected, send a message to that friend
+            if (selectedFriend != null) {
+                String message = txtMsg.getText();
+                if (!message.isEmpty()) {
+                    handleFriendsMessage(selectedFriend, message);
+                    txtMsg.clear();
+                }
+            } else {
+                // If no friend is selected, show an error message to the user
+                System.out.println("No friend selected.");
+            }
+        }
+        // If the "Home" tab is selected, send a broadcast message
+        else if (selectedTab == home) {
+            sendMsg(txtMsg.getText());
+        }
     }
 
     /**
@@ -169,6 +207,7 @@ public class ClientFormController {
      * @param msgToSend The message to send.
      */
     private void sendMsg(String msgToSend) {
+        System.out.println("sendMsg method called");
         if (!msgToSend.isEmpty()) {
 
             HBox hBox = new HBox();
@@ -202,7 +241,7 @@ public class ClientFormController {
                 dataOutputStream.flush();
 
                 // Store the message in the database
-                onLimeDB.storeMessageInDB(clientNameProperty.get(), null, msgToSend, new Timestamp(System.currentTimeMillis()), 1);
+                onLimeDB.storeMessageInDB(clientNameProperty.get(), null, msgToSend, new Timestamp(System.currentTimeMillis()), "broadcast");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -253,6 +292,10 @@ public class ClientFormController {
         Platform.runLater(() -> {
             vBox.getChildren().add(hBoxName);
             vBox.getChildren().add(hBox);
+
+            // Add the message to the friends list VBox
+            vBoxFriends.getChildren().add(hBox);
+            vBoxFriends.getChildren().add(hBoxName);
         });
     }
 
@@ -263,7 +306,7 @@ public class ClientFormController {
      */
     public void clickedUsername(MouseEvent event) {
         System.out.println("Clicked Username");
-     // Todo: Implement private messaging
+        // Todo: Implement private messaging
     }
 
 
@@ -290,6 +333,27 @@ public class ClientFormController {
             // Add all usernames to the usersList
             usersList.getItems().addAll(allUsernames);
         });
+    }
+
+    /* Handles Messaging */
+
+    // Method to handle broadcast messages
+    private void broadcastMessage(String message) {
+        // Implement the logic to handle a broadcast message
+        System.out.println("Broadcast message: " + message);
+        // TODO: Send the message to all users in the usersList ListView
+    }
+    // Method to handle friends messages
+    private void handleFriendsMessage(String username, String message) {
+        // Implement the logic to handle a friends message
+        System.out.println("Friends message to " + username + ": " + message);
+        // TODO: Send the message to the specific user in the friendsList ListView
+    }
+    // Method to handle direct messages
+    private void handleDirectMessage(String username, String message) {
+        // Implement the logic to handle a direct message
+        System.out.println("Direct message to " + username + ": " + message);
+        // TODO: Send the message to the specific user in the directMessage ListView
     }
 
 }

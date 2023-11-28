@@ -6,13 +6,11 @@
 
 /* Styling for the main application window */
 .root {
-    -fx-background-color: #f6f4f2;
     -fx-font-family: "Segoe UI Light";
 }
 
 /* Styling for the Login window */
 .login-scene-bg {
-    -fx-background-color: #bb7fc9;
     -fx-alignment: center;
 }
 
