@@ -187,7 +187,31 @@ public class OnLimeDB {
         }
     }
 
-
+    /**
+     * Retrieves the team ID for a user from the database based on the provided username.
+     *
+     * @param username The username of the user
+     * @return The team ID of the user, or -1 if not found
+     */
+    public int getTeamId(String username) {
+        String query = "SELECT team_id FROM user_teams WHERE user_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            int userId = getUserId(username);
+            if (userId == -1) {
+                System.out.println("User not found: " + username);
+                return -1;
+            }
+            preparedStatement.setInt(1, userId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("team_id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 
     /**
      * Checks if the teamId exists in the database
