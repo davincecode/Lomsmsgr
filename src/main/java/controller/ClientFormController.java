@@ -1,6 +1,7 @@
 package controller;
 
 import database.OnLimeDB;
+import database.Message;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -30,17 +31,21 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+
 public class ClientFormController {
     public AnchorPane pane;
     public ScrollPane scrollPane;
     public VBox vBox;
     public VBox vBoxFriends;
     public TextField txtMsg;
+    public TextField txtMsgFriends;
+    public TextField txtMsgDM;
     public Text txtLabelUR;
     public Text txtLabelBL;
 
     private Server server;
     private static int userId;
+    private static int senderId;
     private OnLimeDB onLimeDB;
     private Socket socket;
     private DataInputStream dataInputStream;
@@ -59,12 +64,35 @@ public class ClientFormController {
     private Tab addFriends;
     @FXML
     private Tab home;
+    @FXML
+    private Tab directMsg;
+    @FXML
+    private VBox vBoxDM;
 
     /**
      * Initializes the client controller, establishes a connection to the server, and sets up the user interface.
      */
     public void initialize() {
         onLimeDB = new OnLimeDB();
+
+        // Load broadcast messages
+        List<Message> broadcastMessages = onLimeDB.getAllBroadcastMessages();
+        for (Message message : broadcastMessages) {
+            Label messageLabel = new Label(message.getText());
+            vBox.getChildren().add(messageLabel);
+        }
+
+        List<Message> friendsMessages = onLimeDB.getAllFriendsMessages();
+        for (Message message : friendsMessages) {
+            Label messageLabel = new Label(message.getText());
+            vBoxFriends.getChildren().add(messageLabel);
+        }
+
+        List<Message> directMessages = onLimeDB.getAllDirectMessages();
+        for (Message message : directMessages) {
+            Label messageLabel = new Label(message.getText());
+            vBoxDM.getChildren().add(messageLabel);
+        }
 
         // Fetch the userId when initializing the controller
         txtLabelUR.textProperty().bind(clientNameProperty);
@@ -85,10 +113,8 @@ public class ClientFormController {
         List<String> allUsernames = onLimeDB.getAllUsernames();
         usersList.getItems().addAll(allUsernames);
 
-        // Adds buttons to the users list
-        // usersList.setCellFactory(param -> new UserListCell(usersList));
         // Adds users to friends and message list
-        usersList.setCellFactory(param -> new UserListCell(friendsList, directMessage, dataOutputStream));
+        usersList.setCellFactory(param -> new UserListCell(friendsList, directMessage, dataOutputStream, txtMsg, txtMsgFriends, txtMsgDM, vBox, vBoxFriends, vBoxDM, tabPane, home, addFriends, directMsg, clientNameProperty, onLimeDB));
 
         // Add a listener to the loggedInUsers list in the server
         server.getLoggedInUsers().addListener((ListChangeListener<String>) change -> {
@@ -178,27 +204,57 @@ public class ClientFormController {
         // Get the selected tab
         Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
 
-        // If the "Friends" tab is selected, send a friends message
-        if (selectedTab == addFriends) {
-            // Get the selected friend from the friendsList
-            String selectedFriend = friendsList.getSelectionModel().getSelectedItem();
-
-            // If a friend is selected, send a message to that friend
-            if (selectedFriend != null) {
-                String message = txtMsg.getText();
-                if (!message.isEmpty()) {
-                    handleFriendsMessage(selectedFriend, message);
-                    txtMsg.clear();
-                }
-            } else {
-                // If no friend is selected, show an error message to the user
-                System.out.println("No friend selected.");
+        // If the "Home" tab is selected, send a broadcast message
+        if (selectedTab == home) {
+            String message = txtMsg.getText();
+            if (!message.isEmpty()) {
+                sendMsg(message);
+                displayMessageInVBox(message, vBox);
+                txtMsg.clear();
             }
         }
-        // If the "Home" tab is selected, send a broadcast message
-        else if (selectedTab == home) {
-            sendMsg(txtMsg.getText());
+        // If the "Friends" tab is selected, send a message to all friends
+        else if (selectedTab == addFriends) {
+            // Get the message from the txtMsgFriends text field
+            String message = txtMsgFriends.getText();
+
+            // If a message is entered, send it to each friend
+            if (!message.isEmpty()) {
+                for (String friend : friendsList.getItems()) {
+                    handleFriendsMessage(friend, message);
+                }
+
+                // Display the sent message in the sender's vBoxFriends
+                // displayMessageInVBox(clientNameProperty.get() + ": " + message, vBoxFriends);
+                // txtMsgFriends.clear();
+
+                displayMessageInVBox(message, vBoxFriends);
+                txtMsgFriends.clear();
+            }
         }
+        // If the "Direct Message" tab is selected, send a direct message
+        else if (selectedTab == directMsg) {
+            // Get the selected user from the directMessage ListView
+            String selectedUser = directMessage.getSelectionModel().getSelectedItem();
+
+            // If a user is selected, send a message to that user
+            if (selectedUser != null) {
+                String message = txtMsgDM.getText();
+                if (!message.isEmpty()) {
+                    handleDirectMessage(selectedUser, message);
+                    displayMessageInVBox(clientNameProperty.get() + ": " + message, vBoxDM);
+                    txtMsgDM.clear();
+                }
+            } else {
+                // If no user is selected, show an error message to the user
+                System.out.println("No user selected.");
+            }
+        }
+    }
+
+    private void displayMessageInVBox(String message, VBox destinationVBox) {
+        HBox hBox = createHBoxForMessage(message);
+        destinationVBox.getChildren().add(hBox);
     }
 
     /**
@@ -260,16 +316,22 @@ public class ClientFormController {
      * @throws IOException If an I/O error occurs during message processing.
      */
     public void receiveMessage(String msg, VBox vBox, OnLimeDB onLimeDB, int messageId) throws IOException {
-        String name = msg.split("-")[0];
-        String msgFromServer = msg.split("-")[1];
+        // Get the currently selected tab
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
 
-        HBox hBox = new HBox();
+        // Get the username from the message
+        String[] parts = msg.split("-");
+        String senderName = parts[0];
+        String msgFromServer = parts.length > 1 ? parts[1] : "";
+
+        // Create a new HBox for the message
+        HBox hBox = createHBoxForMessage(msg);
         hBox.setAlignment(Pos.CENTER_LEFT);
         hBox.setPadding(new Insets(5, 5, 5, 10));
 
         HBox hBoxName = new HBox();
         hBoxName.setAlignment(Pos.CENTER_LEFT);
-        Text textName = new Text(name);
+        Text textName = new Text(senderName);
         TextFlow textFlowName = new TextFlow(textName);
         hBoxName.getChildren().add(textFlowName);
 
@@ -281,22 +343,64 @@ public class ClientFormController {
 
         hBox.getChildren().add(textFlow);
 
+        /* Delete message from database */
         Button deleteButton = new Button("Delete");
         deleteButton.setOnAction(event -> {
-            onLimeDB.deleteMessage(messageId, userId);
+            // Determine which type of message to delete based on the VBox
+            if (vBox == vBox) {
+                int senderId = onLimeDB.getUserId(clientNameProperty.get());
+                onLimeDB.deleteBroadcastMessage(messageId, senderId);
+            } else if (vBox == vBoxFriends) {
+                int senderId = onLimeDB.getUserId(clientNameProperty.get());
+                int receiverId = onLimeDB.getUserId(senderName);
+                onLimeDB.deleteFriendsMessage(messageId, senderId, receiverId);
+            } else if (vBox == vBoxDM) {
+                onLimeDB.deleteDirectMessage(messageId);
+            }
             vBox.getChildren().remove(hBox);
         });
 
         hBox.getChildren().add(deleteButton);
 
-        Platform.runLater(() -> {
-            vBox.getChildren().add(hBoxName);
-            vBox.getChildren().add(hBox);
+        // If the "Home" tab is selected, add the message to vBox
+        if (selectedTab != null && selectedTab.equals(home)) {
+            Platform.runLater(() -> {
+                vBox.getChildren().add(hBoxName);
+                vBox.getChildren().add(hBox);
+            });
+        }
+        // If the "Friends" tab is selected, add the message to vBoxFriends
+        else if (selectedTab != null && selectedTab.equals(addFriends)) {
+            // Check if the sender is a friend before adding the message
+            if (friendsList.getItems().contains(senderName)) {
+                Platform.runLater(() -> {
+                    vBoxFriends.getChildren().add(hBoxName);
+                    vBoxFriends.getChildren().add(hBox);
+                });
+            }
+        }
+        // If the "Direct Message" tab is selected, add the message to vBoxDM
+        else if (selectedTab != null && selectedTab.equals(directMsg)) {
+            // Check if the sender is the selected user before adding the message
+            if (directMessage.getSelectionModel().getSelectedItem().equals(senderName)) {
+                Platform.runLater(() -> {
+                    vBoxDM.getChildren().add(hBoxName);
+                    vBoxDM.getChildren().add(hBox);
+                });
+            }
+        }
+    }
 
-            // Add the message to the friends list VBox
-            vBoxFriends.getChildren().add(hBox);
-            vBoxFriends.getChildren().add(hBoxName);
-        });
+    /**
+     * Creates an HBox for a message.
+     *
+     * @param msg The message to create an HBox for.
+     * @return The HBox containing the message.
+     */
+    private HBox createHBoxForMessage(String msg) {
+        HBox hBox = new HBox();
+        // ... code to set up the HBox with the message ...
+        return hBox;
     }
 
     /**
@@ -327,6 +431,7 @@ public class ClientFormController {
     public void updateUsersList() {
         // Get all usernames from the database
         List<String> allUsernames = onLimeDB.getAllUsernames();
+        allUsernames.remove(clientNameProperty.get());
         Platform.runLater(() -> {
             // Clear the usersList
             usersList.getItems().clear();
@@ -343,12 +448,24 @@ public class ClientFormController {
         System.out.println("Broadcast message: " + message);
         // TODO: Send the message to all users in the usersList ListView
     }
+
     // Method to handle friends messages
-    private void handleFriendsMessage(String username, String message) {
-        // Implement the logic to handle a friends message
-        System.out.println("Friends message to " + username + ": " + message);
-        // TODO: Send the message to the specific user in the friendsList ListView
+    public void handleFriendsMessage(String friendUsername, String message) {
+        try {
+            // Send the message to the server
+            dataOutputStream.writeUTF(friendUsername + "-" + message);
+
+            // Get sender and receiver IDs
+            int senderId = onLimeDB.getUserId(clientNameProperty.get());
+            int receiverId = onLimeDB.getUserId(friendUsername);
+
+            // Insert the message into the database
+            onLimeDB.insertFriendMessage(senderId, receiverId, message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
     // Method to handle direct messages
     private void handleDirectMessage(String username, String message) {
         // Implement the logic to handle a direct message

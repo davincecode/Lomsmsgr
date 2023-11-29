@@ -74,4 +74,5 @@ public class Server {
     public void userLoggedOut(String username) {
         loggedInUsers.remove(username);
     }
+
 }
