@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -29,7 +30,7 @@
                      <children>
                         <ScrollPane fx:id="scrollPane" layoutX="289.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
                            <content>
-                              <VBox fx:id="vBox" prefHeight="422.0" prefWidth="566.0" />
+                              <VBox fx:id="vBoxBroadcast" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
                         <TextField fx:id="txtMsg" alignment="TOP_LEFT" layoutX="290.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
@@ -98,8 +99,8 @@
                               <VBox fx:id="vBoxFriends" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="txtMsgFriends" alignment="TOP_LEFT" layoutX="290.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
-                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="749.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #9acad6; -fx-border-radius: 10px; -fx-background-radius: 10px;">
+                        <TextField fx:id="txtMsgFriends" alignment="TOP_LEFT" layoutX="290.0" layoutY="515.0" onAction="#txtMsgOnActionFriends" prefHeight="45.0" prefWidth="443.0" />
+                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="749.0" layoutY="515.0" onAction="#sendButtonOnActionFriends" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #9acad6; -fx-border-radius: 10px; -fx-background-radius: 10px;">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -136,7 +137,7 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="tabTitle1" layoutX="83.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
+                        <Label fx:id="tabTitle1" layoutX="83.0" layoutY="47.0" text="OnLime Friends" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>
@@ -164,8 +165,8 @@
                               <VBox fx:id="vBoxDM" prefHeight="422.0" prefWidth="566.0" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="txtMsgDM" alignment="TOP_LEFT" layoutX="290.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
-                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="749.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #9acad6; -fx-border-radius: 10px; -fx-background-radius: 10px;">
+                        <TextField fx:id="txtMsgDM" alignment="TOP_LEFT" layoutX="290.0" layoutY="515.0" onAction="#txtMsgOnActionDM" prefHeight="45.0" prefWidth="443.0" />
+                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="749.0" layoutY="515.0" onAction="#sendButtonOnActionDM" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #9acad6; -fx-border-radius: 10px; -fx-background-radius: 10px;">
                            <graphic>
                               <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -202,7 +203,7 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="tabTitleDM" layoutX="83.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
+                        <Label fx:id="tabTitleDM" layoutX="83.0" layoutY="47.0" text="OnLime DM" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>
@@ -221,25 +222,10 @@
                   </AnchorPane>
                </content>
             </Tab>
-            <Tab text="Settings">
+            <Tab fx:id="settings" text="Settings">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="602.0" prefWidth="886.0">
                      <children>
-                        <ScrollPane fx:id="scrollPane111" layoutX="289.0" layoutY="78.0" prefHeight="425.0" prefWidth="569.0">
-                           <content>
-                              <VBox fx:id="vBox111" prefHeight="422.0" prefWidth="566.0" />
-                           </content>
-                        </ScrollPane>
-                        <TextField fx:id="txtMsg111" alignment="TOP_LEFT" layoutX="290.0" layoutY="515.0" onAction="#txtMsgOnAction" prefHeight="45.0" prefWidth="443.0" />
-                        <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" layoutX="749.0" layoutY="515.0" onAction="#sendButtonOnAction" prefHeight="45.0" prefWidth="109.0" style="-fx-background-color: #9acad6; -fx-border-radius: 10px; -fx-background-radius: 10px;">
-                           <graphic>
-                              <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/send-icon.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
                         <Text fill="#0d47a1" strokeType="OUTSIDE" strokeWidth="0.0" text="OffLime">
                            <font>
                               <Font name="Harlow Solid Italic" size="14.0" />
@@ -256,19 +242,7 @@
                            </image>
                         </ImageView>
                         <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
-                        <ListView fx:id="usersList111" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="264.0" />
-                        <Text fx:id="txtLabelBL111" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
-                           <font>
-                              <Font name="Bell MT Bold" size="20.0" />
-                           </font>
-                        </Text>
-                        <Label layoutX="71.0" layoutY="540.0" text="Online" textFill="#e9ff00" />
-                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="23.0" layoutY="518.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/user.png" />
-                           </image>
-                        </ImageView>
-                        <Label fx:id="tabTitle111" layoutX="83.0" layoutY="47.0" text="OnLime Users" textFill="WHITE">
+                        <Label fx:id="tabTitle111" layoutX="83.0" layoutY="47.0" text="OnLime Settings" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>
@@ -278,11 +252,79 @@
                               <Image url="@../img/online-dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="onlineDotBL111" fitHeight="10.0" fitWidth="8.0" layoutX="109.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/online-dot.png" />
-                           </image>
-                        </ImageView>
+                        <VBox fx:id="profileDetails" layoutX="24.0" layoutY="85.0" prefHeight="233.0" prefWidth="437.0" style="-fx-background-color: #e1c7c3;">
+                           <children>
+                              <Label text="Profile Details" textFill="WHITE">
+                                 <VBox.margin>
+                                    <Insets left="20.0" top="20.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Username:" textFill="WHITE">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="20.0" top="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label text="Email:" textFill="WHITE">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="20.0" top="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label text="Access Status:" textFill="WHITE">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="20.0" top="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Button fx:id="changePassword" mnemonicParsing="false" text="Change Password">
+                                 <VBox.margin>
+                                    <Insets left="20.0" top="54.0" />
+                                 </VBox.margin>
+                              </Button>
+                              <Button fx:id="deleteAccount" mnemonicParsing="false" text="Delete Account">
+                                 <VBox.margin>
+                                    <Insets left="150.0" top="-25.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                        </VBox>
+                        <Text fx:id="txtLabelProfile" fill="WHITE" layoutX="128.0" layoutY="160.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Text>
+                        <VBox fx:id="profileBackup" layoutX="24.0" layoutY="346.0" prefHeight="200.0" prefWidth="437.0" style="-fx-background-color: #d8c8d2;">
+                           <children>
+                              <Label text="Backups" textFill="WHITE">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="20.0" top="20.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Button mnemonicParsing="false" text="Create Backup">
+                                 <VBox.margin>
+                                    <Insets left="20.0" top="100.0" />
+                                 </VBox.margin>
+                              </Button>
+                              <Button mnemonicParsing="false" text="Delete Backup">
+                                 <VBox.margin>
+                                    <Insets left="130.0" top="-26.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                        </VBox>
                      </children>
                   </AnchorPane>
                </content>

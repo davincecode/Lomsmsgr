@@ -35,39 +35,57 @@ import java.util.List;
 public class ClientFormController {
     public AnchorPane pane;
     public ScrollPane scrollPane;
-    public VBox vBox;
-    public VBox vBoxFriends;
+
+    /* Sending message */
     public TextField txtMsg;
     public TextField txtMsgFriends;
     public TextField txtMsgDM;
+
+    /* Update Username */
     public Text txtLabelUR;
     public Text txtLabelBL;
+    public Text txtLabelProfile;
 
-    private Server server;
+    /* get the userId from the database */
     private static int userId;
     private static int senderId;
+
+    /* Server */
+    private Server server;
     private OnLimeDB onLimeDB;
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private StringProperty clientNameProperty = new SimpleStringProperty("Client");
 
+    /* Users list */
     @FXML
     private ListView<String> usersList;
     @FXML
     private ListView<String> friendsList;
     @FXML
     private ListView<String> directMessage;
+
+    /* TabPane */
     @FXML
     private TabPane tabPane;
-    @FXML
-    private Tab addFriends;
+
+    /* Tabs */
     @FXML
     private Tab home;
     @FXML
+    private Tab addFriends;
+    @FXML
     private Tab directMsg;
+
+    /* VBoxes */
+    @FXML
+    private VBox vBoxBroadcast;
+    @FXML
+    private VBox vBoxFriends;
     @FXML
     private VBox vBoxDM;
+
 
     /**
      * Initializes the client controller, establishes a connection to the server, and sets up the user interface.
@@ -79,7 +97,7 @@ public class ClientFormController {
         List<Message> broadcastMessages = onLimeDB.getAllBroadcastMessages();
         for (Message message : broadcastMessages) {
             Label messageLabel = new Label(message.getText());
-            vBox.getChildren().add(messageLabel);
+            vBoxBroadcast.getChildren().add(messageLabel);
         }
 
         List<Message> friendsMessages = onLimeDB.getAllFriendsMessages();
@@ -97,6 +115,7 @@ public class ClientFormController {
         // Fetch the userId when initializing the controller
         txtLabelUR.textProperty().bind(clientNameProperty);
         txtLabelBL.textProperty().bind(clientNameProperty);
+        txtLabelProfile.textProperty().bind(clientNameProperty);
 
 
         // Fetch the userId when initializing the controller
@@ -109,19 +128,25 @@ public class ClientFormController {
             e.printStackTrace();
         }
 
+
         // Get all usernames from the database and add them to the usersList
         List<String> allUsernames = onLimeDB.getAllUsernames();
         usersList.getItems().addAll(allUsernames);
 
+        // Get all usernames added as friends from the database and add them to the friendsList
+        int userId = onLimeDB.getUserId(username);
+        List<String> allFriends = onLimeDB.getAllFriends(userId);
+        friendsList.getItems().addAll(allFriends);
+
+        // Todo: Direct Message
+
         // Adds users to friends and message list
-        usersList.setCellFactory(param -> new UserListCell(friendsList, directMessage, dataOutputStream, txtMsg, txtMsgFriends, txtMsgDM, vBox, vBoxFriends, vBoxDM, tabPane, home, addFriends, directMsg, clientNameProperty, onLimeDB));
+        usersList.setCellFactory(param -> new UserListCell(friendsList, directMessage, dataOutputStream, txtMsg, txtMsgFriends, txtMsgDM, vBoxBroadcast, vBoxFriends, vBoxDM, tabPane, home, addFriends, directMsg, clientNameProperty, onLimeDB));
 
         // Add a listener to the loggedInUsers list in the server
         server.getLoggedInUsers().addListener((ListChangeListener<String>) change -> {
             // Update the usersList on the JavaFX application thread
-            Platform.runLater(() -> {
-                updateUsersList();
-            });
+            Platform.runLater(this::updateUsersList);
         });
 
         // Listener for the list of logged-in users
@@ -154,7 +179,7 @@ public class ClientFormController {
                 while (socket.isConnected() && !socket.isClosed()) {
                     try {
                         String receivingMsg = dataInputStream.readUTF();
-                        receiveMessage(receivingMsg, this.vBox, new OnLimeDB(), 0);
+                        receiveMessage(receivingMsg, this.vBoxBroadcast, onLimeDB, 0, username);
                     } catch (SocketException e) {
                         System.out.println("Socket was closed, exiting read loop");
                         break;
@@ -165,7 +190,11 @@ public class ClientFormController {
             }
         }).start();
 
-        this.vBox.heightProperty().addListener((observableValue, oldValue, newValue) ->
+        this.vBoxBroadcast.heightProperty().addListener((observableValue, oldValue, newValue) ->
+                scrollPane.setVvalue((Double) newValue));
+        this.vBoxFriends.heightProperty().addListener((observableValue, oldValue, newValue) ->
+                scrollPane.setVvalue((Double) newValue));
+        this.vBoxDM.heightProperty().addListener((observableValue, oldValue, newValue) ->
                 scrollPane.setVvalue((Double) newValue));
 
     }
@@ -186,83 +215,70 @@ public class ClientFormController {
         ServerFormController.receiveMessage(clientNameProperty.get() + " left the chat.");
     }
 
-    /**
-     * Handles the action event when the user presses the Enter key in the message text field.
-     *
-     * @param actionEvent The ActionEvent triggered by pressing the Enter key.
-     */
+    // Handles the action event when the user presses the Enter key in the message text field.
     public void txtMsgOnAction(ActionEvent actionEvent) {
         sendButtonOnAction(actionEvent);
     }
+    public void txtMsgOnActionFriends(ActionEvent actionEvent) {
+        sendButtonOnActionFriends(actionEvent);
+    }
+    public void txtMsgOnActionDM(ActionEvent actionEvent) {
+        sendButtonOnActionDM(actionEvent);
+    }
 
-    /**
-     * Handles the action event when the user clicks the send button.
-     *
-     * @param actionEvent The ActionEvent triggered by clicking the send button.
-     */
-    public void sendButtonOnAction(ActionEvent actionEvent) {
-        // Get the selected tab
-        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+   // Handles the action event when the user clicks the "Send" button.
+   public void sendButtonOnAction(ActionEvent actionEvent) {
+       String message = txtMsg.getText();
+       if (!message.isEmpty()) {
+           sendMsg(message, vBoxBroadcast);
+           txtMsg.clear();
+       }
+   }
 
-        // If the "Home" tab is selected, send a broadcast message
-        if (selectedTab == home) {
-            String message = txtMsg.getText();
-            if (!message.isEmpty()) {
-                sendMsg(message);
-                displayMessageInVBox(message, vBox);
-                txtMsg.clear();
-            }
+    public void sendButtonOnActionFriends(ActionEvent actionEvent) {
+        String message = txtMsgFriends.getText();
+        if (!message.isEmpty()) {
+            sendMsg(message, vBoxFriends);
+            txtMsgFriends.clear();
         }
-        // If the "Friends" tab is selected, send a message to all friends
-        else if (selectedTab == addFriends) {
-            // Get the message from the txtMsgFriends text field
-            String message = txtMsgFriends.getText();
+    }
 
-            // If a message is entered, send it to each friend
+    public void sendButtonOnActionDM(ActionEvent actionEvent) {
+        String selectedUser = directMessage.getSelectionModel().getSelectedItem();
+        if (selectedUser != null) {
+            String message = txtMsgDM.getText();
             if (!message.isEmpty()) {
-                for (String friend : friendsList.getItems()) {
-                    handleFriendsMessage(friend, message);
-                }
-
-                // Display the sent message in the sender's vBoxFriends
-                // displayMessageInVBox(clientNameProperty.get() + ": " + message, vBoxFriends);
-                // txtMsgFriends.clear();
-
-                displayMessageInVBox(message, vBoxFriends);
-                txtMsgFriends.clear();
+                sendMsg(message, vBoxDM);
+                txtMsgDM.clear();
             }
-        }
-        // If the "Direct Message" tab is selected, send a direct message
-        else if (selectedTab == directMsg) {
-            // Get the selected user from the directMessage ListView
-            String selectedUser = directMessage.getSelectionModel().getSelectedItem();
-
-            // If a user is selected, send a message to that user
-            if (selectedUser != null) {
-                String message = txtMsgDM.getText();
-                if (!message.isEmpty()) {
-                    handleDirectMessage(selectedUser, message);
-                    displayMessageInVBox(clientNameProperty.get() + ": " + message, vBoxDM);
-                    txtMsgDM.clear();
-                }
-            } else {
-                // If no user is selected, show an error message to the user
-                System.out.println("No user selected.");
-            }
+        } else {
+            System.out.println("No user selected.");
         }
     }
 
     private void displayMessageInVBox(String message, VBox destinationVBox) {
-        HBox hBox = createHBoxForMessage(message);
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER_RIGHT);
+        hBox.setPadding(new Insets(5, 5, 0, 10));
+
+        Text text = new Text(message);
+        text.setStyle("-fx-font-size: 14");
+        TextFlow textFlow = new TextFlow(text);
+
+        textFlow.setStyle("-fx-background-color: #0693e3; -fx-font-weight: bold; -fx-color: white; -fx-background-radius: 20px");
+        textFlow.setPadding(new Insets(5, 10, 5, 10));
+        text.setFill(Color.color(1, 1, 1));
+
+        hBox.getChildren().add(textFlow);
         destinationVBox.getChildren().add(hBox);
-    }
+    } // what's this for? answer: to display the message in the vBox of the sender and receiver (friends and DM)
 
     /**
      * Sends a message to the server.
      *
      * @param msgToSend The message to send.
      */
-    private void sendMsg(String msgToSend) {
+    private void sendMsg(String msgToSend, VBox destinationVBox) {
         System.out.println("sendMsg method called");
         if (!msgToSend.isEmpty()) {
 
@@ -289,8 +305,8 @@ public class ClientFormController {
 
             hBoxTime.getChildren().add(time);
 
-            vBox.getChildren().add(hBox);
-            vBox.getChildren().add(hBoxTime);
+            destinationVBox.getChildren().add(hBox);
+            destinationVBox.getChildren().add(hBoxTime);
 
             try {
                 dataOutputStream.writeUTF(clientNameProperty.get() + "-" + msgToSend);
@@ -315,7 +331,7 @@ public class ClientFormController {
      * @param messageId The ID of the received message.
      * @throws IOException If an I/O error occurs during message processing.
      */
-    public void receiveMessage(String msg, VBox vBox, OnLimeDB onLimeDB, int messageId) throws IOException {
+    public void receiveMessage(String msg, VBox vBox, OnLimeDB onLimeDB, int messageId, String username) throws IOException {
         // Get the currently selected tab
         Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
 
@@ -323,6 +339,9 @@ public class ClientFormController {
         String[] parts = msg.split("-");
         String senderName = parts[0];
         String msgFromServer = parts.length > 1 ? parts[1] : "";
+        if (msgFromServer == null) {
+            msgFromServer = "";  // set to empty string or some default value
+        }
 
         // Create a new HBox for the message
         HBox hBox = createHBoxForMessage(msg);
@@ -352,7 +371,7 @@ public class ClientFormController {
                 onLimeDB.deleteBroadcastMessage(messageId, senderId);
             } else if (vBox == vBoxFriends) {
                 int senderId = onLimeDB.getUserId(clientNameProperty.get());
-                int receiverId = onLimeDB.getUserId(senderName);
+                int receiverId = onLimeDB.getUserId(username);
                 onLimeDB.deleteFriendsMessage(messageId, senderId, receiverId);
             } else if (vBox == vBoxDM) {
                 onLimeDB.deleteDirectMessage(messageId);
@@ -461,16 +480,22 @@ public class ClientFormController {
 
             // Insert the message into the database
             onLimeDB.insertFriendMessage(senderId, receiverId, message);
+
+            // Display the sent message on the sender's vBoxFriends
+            displayMessageInVBox(clientNameProperty.get() + ": " + message, vBoxFriends);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     // Method to handle direct messages
-    private void handleDirectMessage(String username, String message) {
-        // Implement the logic to handle a direct message
-        System.out.println("Direct message to " + username + ": " + message);
-        // TODO: Send the message to the specific user in the directMessage ListView
+    public void handleDirectMessage(String username, String message) {
+        try {
+            // Send the message to the specific user in the directMessage ListView
+            dataOutputStream.writeUTF(username + "-" + message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

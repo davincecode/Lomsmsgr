@@ -260,9 +260,11 @@ public class OnLimeDB {
     }
 
     public void deleteFriendsMessage(int messageId, int senderId, int receiverId) {
-        String query = "DELETE FROM friends_messages WHERE message_id = ?";
+        String query = "DELETE FROM friends_messages WHERE message_id = ? AND sender_id = ? AND receiver_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, messageId);
+            preparedStatement.setInt(2, senderId);
+            preparedStatement.setInt(3, receiverId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -318,6 +320,24 @@ public class OnLimeDB {
             e.printStackTrace();
         }
         return usernames;
+    }
+
+    public List<String> getAllFriends(int userId) {
+        List<String> friends = new ArrayList<>();
+        String query = "SELECT u.username FROM users u " +
+                "JOIN friends f ON u.user_id = f.friend_id " +
+                "WHERE f.user_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, userId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    friends.add(resultSet.getString("username"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return friends;
     }
 
     /**
