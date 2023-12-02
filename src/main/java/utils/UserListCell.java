@@ -87,15 +87,32 @@ public class UserListCell extends ListCell<String> {
 
     // Handle Add Friends, Add DM, and Delete button clicks
     private void handleButtonClick(String username, String buttonLabel) {
+        int userId = onLimeDB.getUserId(clientNameProperty.get());
+        int friendId = onLimeDB.getUserId(username);
+
         if ("Add Friend".equals(buttonLabel)) {
             System.out.println("Adding " + username + " as a friend.");
             if (!friendsList.getItems().contains(username)) {
                 friendsList.getItems().add(username);
+                onLimeDB.addFriend(userId, friendId);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Information Dialog");
+                alert.setHeaderText(null);
+                alert.setContentText(username + " is already in your friends list.");
+                alert.showAndWait();
             }
         } else if ("Add DM".equals(buttonLabel)) {
             System.out.println("Adding " + username + " to direct messages.");
             if (!directMessage.getItems().contains(username)) {
                 directMessage.getItems().add(username);
+                onLimeDB.addDM(userId, friendId);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Information Dialog");
+                alert.setHeaderText(null);
+                alert.setContentText(username + " is already in your direct messages.");
+                alert.showAndWait();
             }
         } else if ("Delete".equals(buttonLabel)) {
             System.out.println("Deleting " + username);
