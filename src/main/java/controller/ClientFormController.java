@@ -257,21 +257,42 @@ public class ClientFormController {
     }
 
     private void displayMessageInVBox(String message, VBox destinationVBox) {
-        HBox hBox = new HBox();
-        hBox.setAlignment(Pos.CENTER_RIGHT);
-        hBox.setPadding(new Insets(5, 5, 0, 10));
+        try {
+            System.out.println("displayMessageInVBox called");
+            Platform.runLater(() -> {
+                HBox hBox = new HBox();
+                hBox.setAlignment(Pos.CENTER_LEFT);
+                hBox.setPadding(new Insets(5, 5, 0, 10));
 
-        Text text = new Text(message);
-        text.setStyle("-fx-font-size: 14");
-        TextFlow textFlow = new TextFlow(text);
+                Text text = new Text(message);
+                text.setStyle("-fx-font-size: 14");
+                TextFlow textFlow = new TextFlow(text);
 
-        textFlow.setStyle("-fx-background-color: #0693e3; -fx-font-weight: bold; -fx-color: white; -fx-background-radius: 20px");
-        textFlow.setPadding(new Insets(5, 10, 5, 10));
-        text.setFill(Color.color(1, 1, 1));
+                textFlow.setStyle("-fx-background-color: #0693e3; -fx-font-weight: bold; -fx-color: white; -fx-background-radius: 20px");
+                textFlow.setPadding(new Insets(5, 10, 5, 10));
+                text.setFill(Color.color(1, 1, 1));
 
-        hBox.getChildren().add(textFlow);
-        destinationVBox.getChildren().add(hBox);
-    } // what's this for? answer: to display the message in the vBox of the sender and receiver (friends and DM)
+                // Senders Delete Button
+                Button deleteButton = new Button("Delete");
+                deleteButton.setOnAction(event -> {
+                    // Remove the message from the VBox
+                    destinationVBox.getChildren().remove(hBox);
+
+                    // Delete the message from the database
+                    // You need to pass the correct messageId and senderId
+                    // onLimeDB.deleteBroadcastMessage(messageId, senderId);
+                });
+
+                // Add the delete button before the textFlow
+                hBox.getChildren().addAll(deleteButton, textFlow);
+                System.out.println("hBox children: " + hBox.getChildren());
+                destinationVBox.getChildren().add(hBox);
+                System.out.println("destinationVBox children: " + destinationVBox.getChildren());
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Sends a message to the server.
