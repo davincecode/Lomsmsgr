@@ -1,7 +1,7 @@
 package controller;
 
-import database.OnLimeDB;
 import database.Message;
+import database.OnLimeDB;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -92,6 +92,8 @@ public class ClientFormController {
      */
     public void initialize() {
         onLimeDB = new OnLimeDB();
+        // Load friends list
+//        loadFriendsList();
 
         // Load broadcast messages
         List<Message> broadcastMessages = onLimeDB.getAllBroadcastMessages();
@@ -117,7 +119,6 @@ public class ClientFormController {
         txtLabelBL.textProperty().bind(clientNameProperty);
         txtLabelProfile.textProperty().bind(clientNameProperty);
 
-
         // Fetch the userId when initializing the controller
         String username = "username";
         userId = onLimeDB.getUserId(username);
@@ -133,12 +134,18 @@ public class ClientFormController {
         List<String> allUsernames = onLimeDB.getAllUsernames();
         usersList.getItems().addAll(allUsernames);
 
-        // Get all usernames added as friends from the database and add them to the friendsList
-        int userId = onLimeDB.getUserId(username);
-        List<String> allFriends = onLimeDB.getAllFriends(userId);
-        friendsList.getItems().addAll(allFriends);
+        // Get all usernames from the database and add them to the friendsList
+        List<Integer> allFriends = onLimeDB.getAllUserIdsFromFriends();
+        for (Integer friend : allFriends) {
+            String usernameFriend = onLimeDB.getUsernameById(friend);
+            friendsList.getItems().add(usernameFriend);
+        }
 
-        // Todo: Direct Message
+        // Load users list
+        updateUsersList();
+        loadFriendsList();
+
+        // Todo: DM List
 
         // Adds users to friends and message list
         usersList.setCellFactory(param -> new UserListCell(friendsList, directMessage, dataOutputStream, txtMsg, txtMsgFriends, txtMsgDM, vBoxBroadcast, vBoxFriends, vBoxDM, tabPane, home, addFriends, directMsg, clientNameProperty, onLimeDB));
@@ -157,13 +164,11 @@ public class ClientFormController {
                     @Override
                     public void run() {
                         updateUsersList();
+                        loadFriendsList();
                     }
                 });
             }
         });
-
-        // Update the users list when the client form is created
-        updateUsersList();
 
         // Thread to connect to the server
         new Thread(() -> {
@@ -197,6 +202,20 @@ public class ClientFormController {
         this.vBoxDM.heightProperty().addListener((observableValue, oldValue, newValue) ->
                 scrollPane.setVvalue((Double) newValue));
 
+    }
+
+    // Load users friends list
+    public void loadFriendsList() {
+        // Fetch all user_ids from the friends table
+        List<Integer> allUserIds = onLimeDB.getAllUserIdsFromFriends();
+
+        // Fetch the username for each user_id and add it to the friendsList
+        for (Integer userId : allUserIds) {
+            String username = onLimeDB.getUsernameById(userId);
+            if (username != null && !friendsList.getItems().contains(username)) {
+                friendsList.getItems().add(username);
+            }
+        }
     }
 
 
@@ -449,9 +468,15 @@ public class ClientFormController {
      * @param event The MouseEvent triggered by clicking on a username.
      */
     public void clickedUsername(MouseEvent event) {
-        System.out.println("Clicked Username");
-        // Todo: Implement private messaging
+        ListView<String> sourceList = (ListView<String>) event.getSource();
+        if (sourceList == usersList || sourceList == friendsList) {
+            // disable click
+            event.consume();
+        } else if (sourceList == directMessage) {
+            System.out.println("Clicked Username");
+        }
     }
+
 
 
     /**

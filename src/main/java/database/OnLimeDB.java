@@ -340,6 +340,44 @@ public class OnLimeDB {
         return friends;
     }
 
+    // adding friends
+    public void addFriend(int userId, int friendId) {
+        String query = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, friendId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addDM(int userId, int friendId) {
+        String query = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, friendId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Retrieving Friends and load to the list
+    public List<Integer> getAllUserIdsFromFriends() {
+        List<Integer> userIds = new ArrayList<>();
+        String query = "SELECT user_id FROM friends";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                userIds.add(resultSet.getInt("user_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userIds;
+    }
+
     /**
      * Closes the database connection if it is open.
      */
