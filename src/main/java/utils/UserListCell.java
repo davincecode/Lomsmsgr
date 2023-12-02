@@ -4,6 +4,8 @@ import database.OnLimeDB;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.io.DataOutputStream;
@@ -43,8 +45,8 @@ public class UserListCell extends ListCell<String> {
         this.clientNameProperty = clientNameProperty;
         this.onLimeDB = onLimeDB;
     }
-    
-    
+
+
 
     @Override
     protected void updateItem(String username, boolean empty) {
@@ -54,8 +56,10 @@ public class UserListCell extends ListCell<String> {
             setText(null);
             setGraphic(null);
         } else {
-            setText(username);
-            setGraphic(createButtons(username));
+            Label usernameLabel = new Label(username);
+            HBox hbox = createButtons(username);
+            hbox.getChildren().add(0, usernameLabel);
+            setGraphic(hbox);
         }
     }
 
@@ -64,23 +68,19 @@ public class UserListCell extends ListCell<String> {
     * that contains three buttons: "Add Friend", "Add DM", and "Delete".
     */
     private HBox createButtons(String username) {
-        Button addFriendButton = new Button("Add Friend");
-        addFriendButton.setOnAction(event -> handleButtonClick(username, "Add Friend"));
+        ComboBox<String> actionsComboBox = new ComboBox<>();
+        actionsComboBox.getItems().addAll("Add Friend", "Add DM", "Delete User");
+        actionsComboBox.setPromptText("Select");
 
-        Button messageButton = new Button("Add DM");
-        messageButton.setOnAction(event -> handleButtonClick(username, "Add DM"));
-
-        Button deleteButton = new Button("Delete");
-        deleteButton.setOnAction(event -> {
-            int messageId = onLimeDB.getUserId(username);
-            int senderId = onLimeDB.getUserId(clientNameProperty.get());
-            onLimeDB.deleteBroadcastMessage(messageId, senderId);
-            getListView().getItems().remove(getItem());
-            System.out.println("Deleted " + messageId);
+        actionsComboBox.setOnAction(event -> {
+            String selectedAction = actionsComboBox.getSelectionModel().getSelectedItem();
+            handleButtonClick(username, selectedAction);
         });
 
         HBox hbox = new HBox(10);
-        hbox.getChildren().addAll(addFriendButton, messageButton, deleteButton); // Add deleteButton here
+        Region spacer = new Region(); // Create a new Region
+        HBox.setHgrow(spacer, Priority.ALWAYS); // Make the Region grow horizontally
+        hbox.getChildren().addAll(spacer, actionsComboBox); // Add the Region before the ComboBox
 
         return hbox;
     }
@@ -95,6 +95,13 @@ public class UserListCell extends ListCell<String> {
             if (!friendsList.getItems().contains(username)) {
                 friendsList.getItems().add(username);
                 onLimeDB.addFriend(userId, friendId);
+
+                // Alert to inform that the friend has been added
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Information Dialog");
+                alert.setHeaderText(null);
+                alert.setContentText(username + " has been added to your friends list.");
+                alert.showAndWait();
             } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Information Dialog");
@@ -107,6 +114,13 @@ public class UserListCell extends ListCell<String> {
             if (!directMessage.getItems().contains(username)) {
                 directMessage.getItems().add(username);
                 onLimeDB.addDM(userId, friendId);
+
+                // Alert to inform that the friend has been added
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Information Dialog");
+                alert.setHeaderText(null);
+                alert.setContentText(username + " has been added to your DM list.");
+                alert.showAndWait();
             } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Information Dialog");
@@ -119,6 +133,7 @@ public class UserListCell extends ListCell<String> {
             friendsList.getItems().remove(username);
             directMessage.getItems().remove(username);
         }
+
     }
 
     private VBox getDestinationVBox() {
