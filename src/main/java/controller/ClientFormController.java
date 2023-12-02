@@ -93,7 +93,7 @@ public class ClientFormController {
     public void initialize() {
         onLimeDB = new OnLimeDB();
         // Load friends list
-//        loadFriendsList();
+        loadFriendsList();
 
         // Load broadcast messages
         List<Message> broadcastMessages = onLimeDB.getAllBroadcastMessages();
@@ -134,16 +134,8 @@ public class ClientFormController {
         List<String> allUsernames = onLimeDB.getAllUsernames();
         usersList.getItems().addAll(allUsernames);
 
-        // Get all usernames from the database and add them to the friendsList
-        List<Integer> allFriends = onLimeDB.getAllUserIdsFromFriends();
-        for (Integer friend : allFriends) {
-            String usernameFriend = onLimeDB.getUsernameById(friend);
-            friendsList.getItems().add(usernameFriend);
-        }
-
         // Load users list
         updateUsersList();
-        loadFriendsList();
 
         // Todo: DM List
 

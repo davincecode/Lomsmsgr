@@ -378,6 +378,18 @@ public class OnLimeDB {
         return userIds;
     }
 
+    // Remove friend
+    public void removeFriend(int userId, int friendId) {
+        String query = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, friendId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Closes the database connection if it is open.
      */
