@@ -7,7 +7,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 
 public class UserListCell extends ListCell<String> {
 
@@ -62,14 +61,14 @@ public class UserListCell extends ListCell<String> {
 
     /*
     * This method is used to create a horizontal box (HBox)
-    * that contains three buttons: "Add Friend", "Message", and "Delete".
+    * that contains three buttons: "Add Friend", "Add DM", and "Delete".
     */
     private HBox createButtons(String username) {
         Button addFriendButton = new Button("Add Friend");
         addFriendButton.setOnAction(event -> handleButtonClick(username, "Add Friend"));
 
-        Button messageButton = new Button("Message");
-        messageButton.setOnAction(event -> handleButtonClick(username, "Message"));
+        Button messageButton = new Button("Add DM");
+        messageButton.setOnAction(event -> handleButtonClick(username, "Add DM"));
 
         Button deleteButton = new Button("Delete");
         deleteButton.setOnAction(event -> {
@@ -86,51 +85,22 @@ public class UserListCell extends ListCell<String> {
         return hbox;
     }
 
+    // Handle Add Friends, Add DM, and Delete button clicks
     private void handleButtonClick(String username, String buttonLabel) {
-        // Get the message from the txtMsg text field
-        String message = txtMsg.getText();
-        // Get the message from the txtMsgFriends text field
-        String messageFriends = txtMsgFriends.getText();
-        // Get the message from the txtMsgDM text field
-        String messageDM = txtMsgDM.getText();
-
         if ("Add Friend".equals(buttonLabel)) {
             System.out.println("Adding " + username + " as a friend.");
             if (!friendsList.getItems().contains(username)) {
                 friendsList.getItems().add(username);
             }
-        } else if ("Message".equals(buttonLabel)) {
-            // Determine the destination container based on the selected user
-            VBox destinationVBox = getDestinationVBox();
-
-            // Add the sender's name to the message
-            Label senderLabel = new Label(clientNameProperty.get());
-            destinationVBox.getChildren().add(senderLabel);
-
-            // Add the message to the appropriate container
-            Label messageLabel = new Label(message);
-            destinationVBox.getChildren().add(messageLabel);
-
-            // If a message is entered, send it to each friend
-            for (String friend : friendsList.getItems()) {
-                System.out.println("Sending a message to " + friend);
-                if (!directMessage.getItems().contains(friend)) {
-                    directMessage.getItems().add(friend);
-                }
-                try {
-                    // Use the appropriate message based on the selected tab
-                    Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-                    String messageToSend = selectedTab == home ? message : selectedTab == addFriends ? messageFriends : messageDM;
-
-                    dataOutputStream.writeUTF(clientNameProperty.get() + ": " + messageToSend);
-                    dataOutputStream.flush();
-                    System.out.println("Message sent to server for user: " + username);
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        } else if ("Add DM".equals(buttonLabel)) {
+            System.out.println("Adding " + username + " to direct messages.");
+            if (!directMessage.getItems().contains(username)) {
+                directMessage.getItems().add(username);
             }
+        } else if ("Delete".equals(buttonLabel)) {
+            System.out.println("Deleting " + username);
+            friendsList.getItems().remove(username);
+            directMessage.getItems().remove(username);
         }
     }
 
