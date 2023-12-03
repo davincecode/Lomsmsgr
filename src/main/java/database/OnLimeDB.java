@@ -248,23 +248,20 @@ public class OnLimeDB {
     }
 
     /* Deletion of Message from Database */
-    public void deleteBroadcastMessage(int messageId, int senderId) {
-        String query = "DELETE FROM broadcast_messages WHERE message_id = ? AND sender_id = ?";
+    public void deleteBroadcastMessage(int messageId) {
+        String query = "DELETE FROM broadcast_messages WHERE message_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, messageId);
-            preparedStatement.setInt(2, senderId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteFriendsMessage(int messageId, int senderId, int receiverId) {
-        String query = "DELETE FROM friends_messages WHERE message_id = ? AND sender_id = ? AND receiver_id = ?";
+    public void deleteFriendsMessage(int messageId) {
+        String query = "DELETE FROM friends_messages WHERE message_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, messageId);
-            preparedStatement.setInt(2, senderId);
-            preparedStatement.setInt(3, receiverId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

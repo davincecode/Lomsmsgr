@@ -124,18 +124,47 @@ public class ClientFormController {
         for (Message message : broadcastMessages) {
             Label messageLabel = new Label(message.getText());
             vBoxBroadcast.getChildren().add(messageLabel);
+
+            Button deleteButton = new Button("Delete");
+            HBox hbox = new HBox(messageLabel, deleteButton);
+            deleteButton.setOnAction(event -> {
+                vBoxBroadcast.getChildren().remove(hbox);
+
+                // Delete the message from the database
+                onLimeDB.deleteBroadcastMessage(message.getMessageId());
+            });
+
+            vBoxBroadcast.getChildren().add(hbox);
         }
 
         List<Message> friendsMessages = onLimeDB.getAllFriendsMessages();
         for (Message message : friendsMessages) {
             Label messageLabel = new Label(message.getText());
             vBoxFriends.getChildren().add(messageLabel);
+
+            Button deleteButton = new Button("Delete");
+            HBox hbox = new HBox(messageLabel, deleteButton);
+            deleteButton.setOnAction(event -> {
+                vBoxBroadcast.getChildren().remove(hbox);
+
+                // Delete the message from the database
+                onLimeDB.deleteFriendsMessage(message.getMessageId());
+            });
         }
 
         List<Message> directMessages = onLimeDB.getAllDirectMessages();
         for (Message message : directMessages) {
             Label messageLabel = new Label(message.getText());
             vBoxDM.getChildren().add(messageLabel);
+
+            Button deleteButton = new Button("Delete");
+            HBox hbox = new HBox(messageLabel, deleteButton);
+            deleteButton.setOnAction(event -> {
+                vBoxBroadcast.getChildren().remove(hbox);
+
+                // Delete the message from the database
+                onLimeDB.deleteDirectMessage(message.getMessageId());
+            });
         }
 
         // Fetch the userId when initializing the controller
@@ -432,24 +461,6 @@ public class ClientFormController {
 
         hBox.getChildren().add(textFlow);
 
-        /* Delete message from database */
-        Button deleteButton = new Button("Delete");
-        deleteButton.setOnAction(event -> {
-            // Determine which type of message to delete based on the VBox
-            if (vBox == vBox) {
-                int senderId = onLimeDB.getUserId(clientNameProperty.get());
-                onLimeDB.deleteBroadcastMessage(messageId, senderId);
-            } else if (vBox == vBoxFriends) {
-                int senderId = onLimeDB.getUserId(clientNameProperty.get());
-                int receiverId = onLimeDB.getUserId(username);
-                onLimeDB.deleteFriendsMessage(messageId, senderId, receiverId);
-            } else if (vBox == vBoxDM) {
-                onLimeDB.deleteDirectMessage(messageId);
-            }
-            vBox.getChildren().remove(hBox);
-        });
-
-        hBox.getChildren().add(deleteButton);
 
         // If the "Home" tab is selected, add the message to vBox
         if (selectedTab != null && selectedTab.equals(home)) {
