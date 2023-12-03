@@ -1,0 +1,2 @@
+Message ID,Message Text,Sender ID
+12,This is a broadcast message. All users will receive this message, which will be stored in our database. If a receiver deletes this message, it will also be deleted from our database.,17
