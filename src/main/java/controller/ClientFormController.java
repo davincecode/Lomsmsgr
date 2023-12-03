@@ -478,6 +478,21 @@ public class ClientFormController {
                 });
             }
         }
+
+        // Declare a new final variable and assign msgFromServer to it
+        final String finalMsgFromServer = msgFromServer;
+
+        // Schedule the Alert to be shown on the JavaFX Application Thread
+        Platform.runLater(() -> {
+            // Create a new Alert
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("New Message");
+            alert.setHeaderText(null);
+            alert.setContentText("You have received a new message: " + finalMsgFromServer);
+
+            // Show the Alert and wait for the user to close it
+            alert.showAndWait();
+        });
     }
 
     /**
