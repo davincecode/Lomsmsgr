@@ -30,6 +30,8 @@ import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class ClientFormController {
@@ -103,6 +105,24 @@ public class ClientFormController {
         onLimeDB = new OnLimeDB();
         // Load friends list
         loadFriendsList();
+
+        // Create a Timer object
+        Timer timer = new Timer();
+
+        // Create a TimerTask object
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                // Call the method to update the usersList
+                Platform.runLater(() -> {
+                    updateUsersList();
+                    System.out.println("Updated usersList at: " + LocalTime.now());
+                });
+            }
+        };
+
+        // Schedule the task to run every 3 seconds
+        timer.scheduleAtFixedRate(task, 0, 3000);
 
         // Add a listener to the loggedInUsers list in the server
         try {
