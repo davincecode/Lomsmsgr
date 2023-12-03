@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) Vincent Ybanez 2023-Present
+ * All Rights Reserved 2023
+ */
 package database;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -14,6 +18,7 @@ import java.util.List;
 
 /**
  * This class handles all database operations.
+ * * @Author: davincecode
  */
 public class OnLimeDB {
     private Connection connection;
@@ -42,6 +47,7 @@ public class OnLimeDB {
      *
      * @param username The username to check
      * @return The user ID if the username exists, -1 otherwise
+     * @Author: davincecode
      */
     public int getUserId(String username) {
         String query = "SELECT user_id FROM users WHERE username = ?";
