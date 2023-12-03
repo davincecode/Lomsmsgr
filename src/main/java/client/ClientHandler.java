@@ -59,4 +59,10 @@ public class ClientHandler {
         clients.remove(this);
         server.userLoggedOut(username);
     }
+
+    // Send a message to the client to update their friendsList
+    public void updateFriendsList(String newFriendUsername) throws IOException {
+        // Send a message to the client to update their friendsList
+        dataOutputStream.writeUTF("UPDATE_FRIENDS_LIST-" + newFriendUsername);
+    }
 }
