@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
@@ -48,7 +51,7 @@
                               <Font name="Harlow Solid Italic" size="14.0" />
                            </font>
                         </Text>
-                        <Text fx:id="txtLabelUR" fill="WHITE" layoutX="680.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                        <Text fx:id="txtLabelUR" fill="WHITE" layoutX="680.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
                            <font>
                               <Font name="Bell MT Bold" size="20.0" />
                            </font>
@@ -58,7 +61,14 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
+                        <ComboBox fx:id="status" layoutX="682.0" layoutY="44.0" prefHeight="26.0" prefWidth="109.0">
+                           <items>
+                              <FXCollections fx:factory="observableArrayList">
+                                 <String fx:value="Online" />
+                                 <String fx:value="Offline" />
+                              </FXCollections>
+                           </items>
+                        </ComboBox>
                         <ListView fx:id="usersList" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="264.0" />
                         <Text fx:id="txtLabelBL" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
                            <font>
@@ -76,11 +86,6 @@
                               <Font name="Verdana" size="18.0" />
                            </font>
                         </Label>
-                        <ImageView fx:id="onlineDotUR" fitHeight="10.0" fitWidth="8.0" layoutX="721.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/online-dot.png" />
-                           </image>
-                        </ImageView>
                         <ImageView fx:id="onlineDotBL" fitHeight="10.0" fitWidth="8.0" layoutX="109.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../img/online-dot.png" />
@@ -114,7 +119,7 @@
                               <Font name="Harlow Solid Italic" size="14.0" />
                            </font>
                         </Text>
-                        <Text fx:id="txtLabelUR1" fill="WHITE" layoutX="680.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                        <Text fx:id="txtLabelUR1" fill="WHITE" layoutX="680.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
                            <font>
                               <Font name="Bell MT Bold" size="20.0" />
                            </font>
@@ -124,7 +129,14 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
+                        <ComboBox fx:id="statusFriends" layoutX="682.0" layoutY="44.0" prefHeight="26.0" prefWidth="109.0">
+                           <items>
+                              <FXCollections fx:factory="observableArrayList">
+                                 <String fx:value="Online" />
+                                 <String fx:value="Offline" />
+                              </FXCollections>
+                           </items>
+                        </ComboBox>
                         <ListView fx:id="friendsList" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="264.0" />
                         <Text fx:id="txtLabelBL1" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
                            <font>
@@ -142,11 +154,6 @@
                               <Font name="Verdana" size="18.0" />
                            </font>
                         </Label>
-                        <ImageView fx:id="onlineDotUR1" fitHeight="10.0" fitWidth="8.0" layoutX="721.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/online-dot.png" />
-                           </image>
-                        </ImageView>
                         <ImageView fx:id="onlineDotBL1" fitHeight="10.0" fitWidth="8.0" layoutX="109.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../img/online-dot.png" />
@@ -180,7 +187,7 @@
                               <Font name="Harlow Solid Italic" size="14.0" />
                            </font>
                         </Text>
-                        <Text fx:id="txtLabelURDM" fill="WHITE" layoutX="680.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
+                        <Text fx:id="txtLabelURDM" fill="WHITE" layoutX="680.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
                            <font>
                               <Font name="Bell MT Bold" size="20.0" />
                            </font>
@@ -190,7 +197,14 @@
                               <Image url="@../img/user.png" />
                            </image>
                         </ImageView>
-                        <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
+                        <ComboBox fx:id="statusDM" layoutX="682.0" layoutY="44.0" prefHeight="26.0" prefWidth="109.0">
+                           <items>
+                              <FXCollections fx:factory="observableArrayList">
+                                 <String fx:value="Online" />
+                                 <String fx:value="Offline" />
+                              </FXCollections>
+                           </items>
+                        </ComboBox>
                         <ListView fx:id="directMessage" layoutX="14.0" layoutY="78.0" onMouseClicked="#clickedUsername" prefHeight="425.0" prefWidth="264.0" />
                         <Text fx:id="txtLabelBLDM" fill="WHITE" layoutX="70.0" layoutY="537.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
                            <font>
@@ -208,11 +222,6 @@
                               <Font name="Verdana" size="18.0" />
                            </font>
                         </Label>
-                        <ImageView fx:id="onlineDotUR11" fitHeight="10.0" fitWidth="8.0" layoutX="721.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/online-dot.png" />
-                           </image>
-                        </ImageView>
                         <ImageView fx:id="onlineDotBL11" fitHeight="10.0" fitWidth="8.0" layoutX="109.0" layoutY="545.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../img/online-dot.png" />
@@ -231,27 +240,11 @@
                               <Font name="Harlow Solid Italic" size="14.0" />
                            </font>
                         </Text>
-                        <Text fx:id="txtLabelUR111" fill="WHITE" layoutX="680.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Client">
-                           <font>
-                              <Font name="Bell MT Bold" size="20.0" />
-                           </font>
-                        </Text>
-                        <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="631.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/user.png" />
-                           </image>
-                        </ImageView>
-                        <Label layoutX="682.0" layoutY="46.0" text="Online" textFill="#e9ff00" />
                         <Label fx:id="tabTitle111" layoutX="83.0" layoutY="47.0" text="OnLime Settings" textFill="WHITE">
                            <font>
                               <Font name="Verdana" size="18.0" />
                            </font>
                         </Label>
-                        <ImageView fx:id="onlineDotUR111" fitHeight="10.0" fitWidth="8.0" layoutX="721.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/online-dot.png" />
-                           </image>
-                        </ImageView>
                         <VBox fx:id="profileDetails" layoutX="24.0" layoutY="85.0" prefHeight="233.0" prefWidth="437.0" style="-fx-background-color: #e1c7c3;">
                            <children>
                               <Label text="Profile Details" textFill="WHITE">

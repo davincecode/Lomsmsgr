@@ -33,6 +33,7 @@ import java.util.List;
 
 
 public class ClientFormController {
+    public static ClientFormController instance;
     public AnchorPane pane;
     public ScrollPane scrollPane;
 
@@ -86,6 +87,14 @@ public class ClientFormController {
     @FXML
     private VBox vBoxDM;
 
+    /* Status */
+    @FXML
+    private ComboBox<String> status;
+    @FXML
+    private ComboBox<String> statusFriends;
+    @FXML
+    private ComboBox<String> statusDM;
+
 
     /**
      * Initializes the client controller, establishes a connection to the server, and sets up the user interface.
@@ -95,23 +104,67 @@ public class ClientFormController {
         // Load friends list
         loadFriendsList();
 
+        // Add a listener to the loggedInUsers list in the server
+        try {
+            Server.getInstance().addStatusListener(change -> {
+                // Update the usersList on the JavaFX application thread
+                Platform.runLater(this::updateUsersList);
+                // Update the friendsList on the JavaFX application thread
+                Platform.runLater(this::loadFriendsList);
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Set the instance variable
+        instance = this;
+
         // Load broadcast messages
         List<Message> broadcastMessages = onLimeDB.getAllBroadcastMessages();
         for (Message message : broadcastMessages) {
             Label messageLabel = new Label(message.getText());
             vBoxBroadcast.getChildren().add(messageLabel);
+
+            Button deleteButton = new Button("Delete");
+            HBox hbox = new HBox(messageLabel, deleteButton);
+            deleteButton.setOnAction(event -> {
+                vBoxBroadcast.getChildren().remove(hbox);
+
+                // Delete the message from the database
+                onLimeDB.deleteBroadcastMessage(message.getMessageId());
+            });
+
+            vBoxBroadcast.getChildren().add(hbox);
         }
 
         List<Message> friendsMessages = onLimeDB.getAllFriendsMessages();
         for (Message message : friendsMessages) {
             Label messageLabel = new Label(message.getText());
             vBoxFriends.getChildren().add(messageLabel);
+
+            Button deleteButton = new Button("Delete");
+            HBox hbox = new HBox(messageLabel, deleteButton);
+            deleteButton.setOnAction(event -> {
+                vBoxBroadcast.getChildren().remove(hbox);
+
+                // Delete the message from the database
+                onLimeDB.deleteFriendsMessage(message.getMessageId());
+            });
         }
 
         List<Message> directMessages = onLimeDB.getAllDirectMessages();
         for (Message message : directMessages) {
             Label messageLabel = new Label(message.getText());
             vBoxDM.getChildren().add(messageLabel);
+
+            Button deleteButton = new Button("Delete");
+            HBox hbox = new HBox(messageLabel, deleteButton);
+            deleteButton.setOnAction(event -> {
+                vBoxBroadcast.getChildren().remove(hbox);
+
+                // Delete the message from the database
+                onLimeDB.deleteDirectMessage(message.getMessageId());
+            });
         }
 
         // Fetch the userId when initializing the controller
@@ -208,6 +261,20 @@ public class ClientFormController {
                 friendsList.getItems().add(username);
             }
         }
+    }
+
+    public void updateStatus(String message) {
+        Platform.runLater(() -> {
+            if (message.contains("joined")) {
+                status.setValue("Online");
+                statusFriends.setValue("Online");
+                statusDM.setValue("Online");
+            } else if (message.contains("left")) {
+                status.setValue("Offline");
+                statusFriends.setValue("Offline");
+                statusDM.setValue("Offline");
+            }
+        });
     }
 
 
@@ -394,24 +461,6 @@ public class ClientFormController {
 
         hBox.getChildren().add(textFlow);
 
-        /* Delete message from database */
-        Button deleteButton = new Button("Delete");
-        deleteButton.setOnAction(event -> {
-            // Determine which type of message to delete based on the VBox
-            if (vBox == vBox) {
-                int senderId = onLimeDB.getUserId(clientNameProperty.get());
-                onLimeDB.deleteBroadcastMessage(messageId, senderId);
-            } else if (vBox == vBoxFriends) {
-                int senderId = onLimeDB.getUserId(clientNameProperty.get());
-                int receiverId = onLimeDB.getUserId(username);
-                onLimeDB.deleteFriendsMessage(messageId, senderId, receiverId);
-            } else if (vBox == vBoxDM) {
-                onLimeDB.deleteDirectMessage(messageId);
-            }
-            vBox.getChildren().remove(hBox);
-        });
-
-        hBox.getChildren().add(deleteButton);
 
         // If the "Home" tab is selected, add the message to vBox
         if (selectedTab != null && selectedTab.equals(home)) {
@@ -440,6 +489,21 @@ public class ClientFormController {
                 });
             }
         }
+
+        // Declare a new final variable and assign msgFromServer to it
+        final String finalMsgFromServer = msgFromServer;
+
+        // Schedule the Alert to be shown on the JavaFX Application Thread
+        Platform.runLater(() -> {
+            // Create a new Alert
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("New Message");
+            alert.setHeaderText(null);
+            alert.setContentText("You have received a new message: " + finalMsgFromServer);
+
+            // Show the Alert and wait for the user to close it
+            alert.showAndWait();
+        });
     }
 
     /**

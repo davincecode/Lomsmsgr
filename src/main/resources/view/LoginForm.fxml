@@ -11,9 +11,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.paint.LinearGradient?>
-<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginFormController">
@@ -23,36 +20,15 @@
       </image>
    </ImageView>
     <VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" styleClass="login-scene-bg">
-        <Label contentDisplay="CENTER" prefHeight="118.0" prefWidth="276.0" styleClass="login-title" stylesheets="@styles.css" text="OffLime!" textAlignment="CENTER" textOverrun="LEADING_WORD_ELLIPSIS">
+      <Label text="Welcome to" textFill="WHITE">
+         <VBox.margin>
+            <Insets bottom="-20.0" left="-100.0" top="10.0" />
+         </VBox.margin>
+      </Label>
+        <Label contentDisplay="CENTER" prefHeight="78.0" prefWidth="175.0" styleClass="login-title" stylesheets="@styles.css" text="OffLime" textAlignment="CENTER" textFill="#f8f8f8" textOverrun="LEADING_WORD_ELLIPSIS">
          <font>
-            <Font name="Arial" size="72.0" />
-         </font>
-         <textFill>
-            <LinearGradient endX="1.0" endY="1.0" startX="0.5225653206650831">
-               <stops>
-                  <Stop>
-                     <color>
-                        <Color red="0.4399999976158142" green="0.7769200205802917" blue="1.0" />
-                     </color>
-                  </Stop>
-                  <Stop offset="0.006711409395973154">
-                     <color>
-                        <Color red="0.4399999976158142" green="0.7769200205802917" blue="1.0" />
-                     </color>
-                  </Stop>
-                  <Stop offset="0.12080536912751677">
-                     <color>
-                        <Color red="0.7826510667800903" green="0.9605262875556946" blue="0.5336257219314575" />
-                     </color>
-                  </Stop>
-                  <Stop offset="1.0">
-                     <color>
-                        <Color red="0.04600000008940697" green="0.3592972755432129" blue="0.46000000834465027" />
-                     </color>
-                  </Stop>
-               </stops>
-            </LinearGradient>
-         </textFill></Label>
+            <Font name="Arial" size="36.0" />
+         </font></Label>
         <VBox maxWidth="240" spacing="20">
             <TextField fx:id="txtName" promptText="username" />
             <StackPane prefHeight="0.0" prefWidth="240.0">
