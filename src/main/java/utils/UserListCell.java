@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) Vincent Ybanez 2023-Present
+ * All Rights Reserved 2023
+ */
+
 package utils;
 
 import database.OnLimeDB;

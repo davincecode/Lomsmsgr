@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<!-- Copyright (C) Vincent Ybanez 2023 -->
 <AnchorPane stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginFormController">
    <ImageView fitHeight="400.0" fitWidth="639.0" pickOnBounds="true" preserveRatio="true">
       <image>
