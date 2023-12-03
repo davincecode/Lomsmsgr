@@ -4,6 +4,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
@@ -130,13 +132,18 @@ public class OnLimeDB {
 
     public List<Message> getAllBroadcastMessages() {
         List<Message> messages = new ArrayList<>();
-        String query = "SELECT message_id, message_text FROM broadcast_messages";
+        String query = "SELECT m.message_id, m.message_text, m.sender_id, u.username " +
+                "FROM broadcast_messages m " +
+                "JOIN users u ON m.sender_id = u.user_id";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
-                int id = resultSet.getInt("message_id");
-                String text = resultSet.getString("message_text");
-                messages.add(new Message(id, text));
+                int messageId = resultSet.getInt("message_id");
+                String messageText = resultSet.getString("message_text");
+                int senderId = resultSet.getInt("sender_id");
+                String senderUsername = resultSet.getString("username");
+                Message message = new Message(messageId, messageText, senderId, senderUsername);
+                messages.add(message);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -451,6 +458,31 @@ public class OnLimeDB {
             });
         } catch (IOException e) {
             System.out.println("Error exporting messages to CSV: " + e.getMessage());
+        }
+    }
+
+    public void restoreMessagesFromCSV(String filename) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/backup/" + filename))) {
+            // Read the headers and ignore them
+            reader.readLine();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Split the line by commas
+                String[] parts = line.split(",");
+
+                // Get the message details
+                int messageId = Integer.parseInt(parts[0]);
+                String messageText = parts[1];
+                int senderId = Integer.parseInt(parts[2]);
+
+                // Insert each message back into the database
+                storeMessageInDB(getUsernameById(senderId), null, messageText, null, "broadcast");
+            }
+
+            System.out.println("Messages restored from CSV file: " + filename);
+        } catch (IOException e) {
+            System.out.println("Error restoring messages from CSV: " + e.getMessage());
         }
     }
 
