@@ -143,7 +143,6 @@ public class ClientFormController {
         List<Message> broadcastMessages = onLimeDB.getAllBroadcastMessages();
         for (Message message : broadcastMessages) {
             Label messageLabel = new Label(message.getText());
-            vBoxBroadcast.getChildren().add(messageLabel);
 
             Button deleteButton = new Button("Delete");
             HBox hbox = new HBox(messageLabel, deleteButton);

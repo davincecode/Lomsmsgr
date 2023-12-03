@@ -2,6 +2,8 @@ package database;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -409,6 +411,38 @@ public class OnLimeDB {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    // Backup
+    public void exportMessagesToCSV(String filename) {
+        try (PrintWriter writer = new PrintWriter(filename)) {
+            // Write the headers
+            writer.println("Message ID,Message Text,Sender ID");
+
+            // Get all messages
+            List<Message> broadcastMessages = getAllBroadcastMessages();
+            List<Message> friendsMessages = getAllFriendsMessages();
+            List<Message> directMessages = getAllDirectMessages();
+
+            // Write broadcast messages to CSV
+            for (Message message : broadcastMessages) {
+                writer.println(message.getId() + "," + message.getText() + "," + message.getSenderId());
+            }
+
+            // Write friends messages to CSV
+            for (Message message : friendsMessages) {
+                writer.println(message.getId() + "," + message.getText() + "," + message.getSenderId());
+            }
+
+            // Write direct messages to CSV
+            for (Message message : directMessages) {
+                writer.println(message.getId() + "," + message.getText() + "," + message.getSenderId());
+            }
+
+            System.out.println("Messages exported to CSV file: " + filename);
+        } catch (IOException e) {
+            System.out.println("Error exporting messages to CSV: " + e.getMessage());
         }
     }
 
