@@ -23,6 +23,7 @@ import server.Server;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class ServerFormController {
     public VBox vBox;
@@ -87,6 +88,13 @@ public class ServerFormController {
     }
 
     public static void receiveMessage(String msgFromClient){
+        // Check if the message contains "joined" or "left the chat"
+        if (msgFromClient.contains("joined")) {
+            ClientFormController.instance.updateStatus(msgFromClient + " joined.");
+        } else if (msgFromClient.contains("left the chat")) {
+            ClientFormController.instance.updateStatus(msgFromClient + " left the chat.");
+        }
+
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER_LEFT);
         hBox.setPadding(new Insets(5,5,5,10));
@@ -107,12 +115,16 @@ public class ServerFormController {
         });
     }
 
+    private static void updateStatus(String message) {
+        System.out.println("Status: " + message);
+    }
+
     public void addButtonOnAction(ActionEvent actionEvent) throws IOException {
         Stage stage = new Stage();
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(pane.getScene().getWindow());
         try {
-            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/LoginForm.fxml"))));
+            stage.setScene(new Scene(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/view/LoginForm.fxml")))));
         } catch (IOException e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR,"something went wrong. can't add client").show();

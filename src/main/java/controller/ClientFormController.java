@@ -33,6 +33,7 @@ import java.util.List;
 
 
 public class ClientFormController {
+    public static ClientFormController instance;
     public AnchorPane pane;
     public ScrollPane scrollPane;
 
@@ -86,6 +87,14 @@ public class ClientFormController {
     @FXML
     private VBox vBoxDM;
 
+    /* Status */
+    @FXML
+    private ComboBox<String> status;
+    @FXML
+    private ComboBox<String> statusFriends;
+    @FXML
+    private ComboBox<String> statusDM;
+
 
     /**
      * Initializes the client controller, establishes a connection to the server, and sets up the user interface.
@@ -94,6 +103,21 @@ public class ClientFormController {
         onLimeDB = new OnLimeDB();
         // Load friends list
         loadFriendsList();
+
+        // Add a listener to the loggedInUsers list in the server
+        try {
+            Server.getInstance().addStatusListener(change -> {
+                // Update the usersList on the JavaFX application thread
+                Platform.runLater(this::updateUsersList);
+                // Update the friendsList on the JavaFX application thread
+                Platform.runLater(this::loadFriendsList);
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Set the instance variable
+        instance = this;
 
         // Load broadcast messages
         List<Message> broadcastMessages = onLimeDB.getAllBroadcastMessages();
@@ -208,6 +232,20 @@ public class ClientFormController {
                 friendsList.getItems().add(username);
             }
         }
+    }
+
+    public void updateStatus(String message) {
+        Platform.runLater(() -> {
+            if (message.contains("joined")) {
+                status.setValue("Online");
+                statusFriends.setValue("Online");
+                statusDM.setValue("Online");
+            } else if (message.contains("left")) {
+                status.setValue("Offline");
+                statusFriends.setValue("Offline");
+                statusDM.setValue("Offline");
+            }
+        });
     }
 
 

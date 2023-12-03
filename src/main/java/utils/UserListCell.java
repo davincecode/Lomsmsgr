@@ -2,7 +2,10 @@ package utils;
 
 import database.OnLimeDB;
 import javafx.beans.property.StringProperty;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -47,7 +50,6 @@ public class UserListCell extends ListCell<String> {
     }
 
 
-
     @Override
     protected void updateItem(String username, boolean empty) {
         super.updateItem(username, empty);
@@ -77,10 +79,19 @@ public class UserListCell extends ListCell<String> {
             handleButtonClick(username, selectedAction);
         });
 
+        // User status label
+        ImageView statusImage = new ImageView();
+        Image image = new Image(getClass().getResource("/img/online-dot.png").toExternalForm());
+        statusImage.setImage(image);
+        statusImage.setFitWidth(10);
+        statusImage.setFitHeight(10);
+
+
         HBox hbox = new HBox(10);
-        Region spacer = new Region(); // Create a new Region
-        HBox.setHgrow(spacer, Priority.ALWAYS); // Make the Region grow horizontally
-        hbox.getChildren().addAll(spacer, actionsComboBox); // Add the Region before the ComboBox
+        hbox.setAlignment(Pos.CENTER);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        hbox.getChildren().addAll(statusImage, spacer, actionsComboBox);
 
         return hbox;
     }
