@@ -4,6 +4,7 @@ public class Message {
     private int id;
     private String text;
     private int senderId;
+    private String senderUsername;
 
     public Message(int id, String text) {
         this.id = id;
@@ -13,6 +14,11 @@ public class Message {
     public Message(int id, String text, int senderId) {
         this(id, text);
         this.senderId = senderId;
+    }
+
+    public Message(int id, String text, int senderId, String senderUsername) {
+        this(id, text, senderId);
+        this.senderUsername = senderUsername;
     }
 
     public int getId() {
@@ -29,5 +35,9 @@ public class Message {
 
     public int getSenderId() {
         return senderId;
+    }
+
+    public String getSenderUsername() {
+        return senderUsername;
     }
 }
