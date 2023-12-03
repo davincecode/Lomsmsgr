@@ -387,6 +387,17 @@ public class OnLimeDB {
         }
     }
 
+    // Delete user
+    public void deleteUser(String username) {
+        String query = "DELETE FROM users WHERE username = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, username);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error deleting user: " + e.getMessage());
+        }
+    }
+
     /**
      * Closes the database connection if it is open.
      */

@@ -97,55 +97,102 @@ public class UserListCell extends ListCell<String> {
     }
 
     // Handle Add Friends, Add DM, and Delete button clicks
-    private void handleButtonClick(String username, String buttonLabel) {
+    private void handleButtonClick(String username, String selectedAction) {
         int userId = onLimeDB.getUserId(clientNameProperty.get());
         int friendId = onLimeDB.getUserId(username);
 
-        if ("Add Friend".equals(buttonLabel)) {
-            System.out.println("Adding " + username + " as a friend.");
-            if (!friendsList.getItems().contains(username)) {
-                friendsList.getItems().add(username);
-                onLimeDB.addFriend(userId, friendId);
-
-                // Alert to inform that the friend has been added
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Information Dialog");
-                alert.setHeaderText(null);
-                alert.setContentText(username + " has been added to your friends list.");
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Information Dialog");
-                alert.setHeaderText(null);
-                alert.setContentText(username + " is already in your friends list.");
-                alert.showAndWait();
-            }
-        } else if ("Add DM".equals(buttonLabel)) {
-            System.out.println("Adding " + username + " to direct messages.");
-            if (!directMessage.getItems().contains(username)) {
-                directMessage.getItems().add(username);
-                onLimeDB.addDM(userId, friendId);
-
-                // Alert to inform that the friend has been added
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Information Dialog");
-                alert.setHeaderText(null);
-                alert.setContentText(username + " has been added to your DM list.");
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Information Dialog");
-                alert.setHeaderText(null);
-                alert.setContentText(username + " is already in your direct messages.");
-                alert.showAndWait();
-            }
-        } else if ("Delete".equals(buttonLabel)) {
-            System.out.println("Deleting " + username);
-            friendsList.getItems().remove(username);
-            directMessage.getItems().remove(username);
+        switch (selectedAction) {
+            case "Add Friend":
+                System.out.println("Adding " + username + " as a friend.");
+                handleAddAction(username, friendsList, userId, friendId, "friends");
+                break;
+            case "Add DM":
+                System.out.println("Adding " + username + " to direct messages.");
+                handleAddAction(username, directMessage, userId, friendId, "DMs");
+                break;
+            case "Delete User":
+                System.out.println("Deleting " + username);
+                friendsList.getItems().remove(username);
+                directMessage.getItems().remove(username);
+                onLimeDB.deleteUser(username);
+                break;
         }
-
     }
+
+    private void handleAddAction(String username, ListView<String> listView, int userId, int friendId, String listType) {
+        if (!listView.getItems().contains(username)) {
+            listView.getItems().add(username);
+
+            if ("friends".equals(listType)) {
+                onLimeDB.addFriend(userId, friendId);
+            } else if ("DMs".equals(listType)) {
+                onLimeDB.addDM(userId, friendId);
+            }
+
+            // Alert to inform that the user has been added
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information Dialog");
+            alert.setHeaderText(null);
+            alert.setContentText(username + " has been added to your " + listType + " list.");
+            alert.showAndWait();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information Dialog");
+            alert.setHeaderText(null);
+            alert.setContentText(username + " is already in your " + listType + " list.");
+            alert.showAndWait();
+        }
+    }
+
+//    private void handleButtonClick(String username, String buttonLabel) {
+//        int userId = onLimeDB.getUserId(clientNameProperty.get());
+//        int friendId = onLimeDB.getUserId(username);
+//
+//        if ("Add Friend".equals(buttonLabel)) {
+//            System.out.println("Adding " + username + " as a friend.");
+//            if (!friendsList.getItems().contains(username)) {
+//                friendsList.getItems().add(username);
+//                onLimeDB.addFriend(userId, friendId);
+//
+//                // Alert to inform that the friend has been added
+//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                alert.setTitle("Information Dialog");
+//                alert.setHeaderText(null);
+//                alert.setContentText(username + " has been added to your friends list.");
+//                alert.showAndWait();
+//            } else {
+//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                alert.setTitle("Information Dialog");
+//                alert.setHeaderText(null);
+//                alert.setContentText(username + " is already in your friends list.");
+//                alert.showAndWait();
+//            }
+//        } else if ("Add DM".equals(buttonLabel)) {
+//            System.out.println("Adding " + username + " to direct messages.");
+//            if (!directMessage.getItems().contains(username)) {
+//                directMessage.getItems().add(username);
+//                onLimeDB.addDM(userId, friendId);
+//
+//                // Alert to inform that the friend has been added
+//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                alert.setTitle("Information Dialog");
+//                alert.setHeaderText(null);
+//                alert.setContentText(username + " has been added to your DM list.");
+//                alert.showAndWait();
+//            } else {
+//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                alert.setTitle("Information Dialog");
+//                alert.setHeaderText(null);
+//                alert.setContentText(username + " is already in your direct messages.");
+//                alert.showAndWait();
+//            }
+//        } else if ("Delete".equals(buttonLabel)) {
+//            System.out.println("Deleting " + username);
+//            friendsList.getItems().remove(username);
+//            directMessage.getItems().remove(username);
+//        }
+//
+//    }
 
     private VBox getDestinationVBox() {
         // Get the currently selected tab
