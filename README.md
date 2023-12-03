@@ -2,7 +2,8 @@
 
 ### Local Area Network Office Messaging System 
 
-Overview A sleek, office-based messaging system which will allow team members to exchange, store, delete, and organize messages. The system can operate peer-to-peer or via a centralized server, using the office’s LAN. It also includes group messaging and broadcasting capabilities. 
+## Overview 
+A sleek, office-based messaging system which will allow team members to exchange, store, delete, and organize messages. The system can operate peer-to-peer or via a centralized server, using the office’s LAN. It also includes group messaging and broadcasting capabilities. 
 
 ## Features 
 
@@ -16,7 +17,7 @@ Overview A sleek, office-based messaging system which will allow team members to
 - Once read, messages can be retained or removed from the Inbox.
 - Backup and restore capabilities #
 
-# Future Features
+## Future Development
 - Sound notification option when a new message arrives
 - More advanced status settings such as Online, Busy, Out to Lunch, On the Phone, Away from Desk
 - Deferred messaging to offline users that will be delivered when the recipient comes online.
@@ -53,7 +54,6 @@ Overview A sleek, office-based messaging system which will allow team members to
 
 - Backup / Restore
 <img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/backupRestore.png" width="60%">
-
 
 
 ## Getting Started.
