@@ -34,25 +34,25 @@ Overview A sleek, office-based messaging system which will allow team members to
 
 ## Project Screenshots.
 - Login 
-<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/login.png" width="50%">
+<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/login.png" width="60%">
 
 - Main Dashboard
-<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/dashboard.png" width="50%">
+<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/dashboard.png" width="60%">
 
 - Account Creation
-<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/account_creation.png" width="50%">
+<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/account_creation.png" width="60%">
 
 - Dashboard Groups
-<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/dashboardgroups.png" width="50%">
+<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/dashboardgroups.png" width="60%">
 
 - Direct Message
-<img src="https://github.com/davincecode/Files-For-Archive/blob/main/directMessage.png" width="50%">
+<img src="https://github.com/davincecode/Files-For-Archive/blob/main/directMessage.png" width="60%">
 
 - Broadcast Pop-up
-<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/broadcast_pop_up_msg.png" width="50%">
+<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/broadcast_pop_up_msg.png" width="60%">
 
 - Backup / Restore
-<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/backupRestore.png" width="50%">
+<img src="https://github.com/davincecode/Files-For-Archive/blob/9b4c9bc4def589491447d9b048ffd1de0734286e/backupRestore.png" width="60%">
 
 
 
