@@ -3,6 +3,7 @@ package server;
 import client.ClientHandler;
 import database.OnLimeDB;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import java.io.IOException;
@@ -34,8 +35,8 @@ public class Server {
                 // Get all usernames from the database and add them to the usersList
                 List<String> allUsernames = onLimeDB.getAllUsernames();
                 loggedInUsers.addAll(allUsernames);
-                System.out.println("Logged in users: " + loggedInUsers);
-                // print all usernames
+                System.out.println("All users in database: " + loggedInUsers);
+
                 for (String username : allUsernames) {
                     System.out.println(username);
                 }
@@ -50,9 +51,8 @@ public class Server {
         }
     }
 
-    public List<String> getAllUsernames() {
-        System.out.println("Logged in users: " + loggedInUsers);
-        return new ArrayList<>(loggedInUsers);
+    public void addStatusListener(ListChangeListener<String> listener) {
+        loggedInUsers.addListener(listener);
     }
 
     public ObservableList<String> getLoggedInUsers() {
@@ -74,4 +74,5 @@ public class Server {
     public void userLoggedOut(String username) {
         loggedInUsers.remove(username);
     }
+
 }

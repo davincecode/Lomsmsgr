@@ -13,11 +13,3 @@
 .login-scene-bg {
     -fx-alignment: center;
 }
-
-.login-title {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #f6f4f2;
-    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.5) , 0,0,0,1 );
-    -fx-label-padding: 0 0 20px 0;
-}
