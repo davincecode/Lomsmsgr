@@ -127,7 +127,7 @@ public class ClientFormController {
                 // Call the method to update the usersList
                 Platform.runLater(() -> {
                     updateUsersList();
-                    System.out.println("Updated usersList at: " + LocalTime.now());
+                    // System.out.println("Updated usersList at: " + LocalTime.now());
                 });
             }
         };
