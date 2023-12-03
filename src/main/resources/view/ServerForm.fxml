@@ -10,9 +10,10 @@
 <?import javafx.scene.text.Text?>
 
 <!-- Copyright (C) Vincent Ybanez 2023 -->
-<AnchorPane fx:id="pane" prefHeight="487.0" prefWidth="463.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ServerFormController">
+
+<AnchorPane fx:id="pane" prefHeight="330.0" prefWidth="464.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ServerFormController">
     <children>
-        <ImageView fitHeight="580.0" fitWidth="569.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="330.0" fitWidth="464.0" pickOnBounds="true">
             <image>
                 <Image url="@../img/serverImg.jpg" />
             </image>
@@ -26,9 +27,9 @@
                 </ImageView>
             </graphic>
         </Button>
-        <ScrollPane fx:id="scrollPane" layoutX="18.0" layoutY="66.0" prefHeight="471.0" prefWidth="428.0">
+        <ScrollPane fx:id="scrollPane" layoutX="18.0" layoutY="66.0" prefHeight="250.0" prefWidth="428.0">
             <content>
-                <VBox fx:id="vBox" prefHeight="468.0" prefWidth="425.0" style="-fx-background-color: #2C777A;" />
+                <VBox fx:id="vBox" prefHeight="231.0" prefWidth="430.0" style="-fx-background-color: #2C777A;" />
             </content>
         </ScrollPane>
         <Text fill="WHITE" fontSmoothingType="LCD" layoutX="18.0" layoutY="39.0" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="OnLime Server" textAlignment="CENTER">
