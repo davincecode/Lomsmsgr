@@ -306,12 +306,13 @@
                                     <Insets left="20.0" top="20.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button mnemonicParsing="false" text="Create Backup">
+                              <ListView fx:id="backUpList" prefHeight="25.0" prefWidth="376.0" />
+                              <Button fx:id="createBackup" mnemonicParsing="false" text="Create Backup">
                                  <VBox.margin>
                                     <Insets left="20.0" top="100.0" />
                                  </VBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" text="Delete Backup">
+                              <Button fx:id="deleteBackup" mnemonicParsing="false" text="Delete Backup">
                                  <VBox.margin>
                                     <Insets left="130.0" top="-26.0" />
                                  </VBox.margin>

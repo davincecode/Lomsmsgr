@@ -1,6 +1,8 @@
 package database;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -416,7 +418,7 @@ public class OnLimeDB {
 
     // Backup
     public void exportMessagesToCSV(String filename) {
-        try (PrintWriter writer = new PrintWriter(filename)) {
+        try (PrintWriter writer = new PrintWriter("src/main/resources/backup/" + filename)) {
             // Write the headers
             writer.println("Message ID,Message Text,Sender ID");
 
@@ -440,7 +442,13 @@ public class OnLimeDB {
                 writer.println(message.getId() + "," + message.getText() + "," + message.getSenderId());
             }
 
-            System.out.println("Messages exported to CSV file: " + filename);
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Backup Status");
+                alert.setHeaderText(null);
+                alert.setContentText("Backup Created: " + filename);
+                alert.showAndWait();
+            });
         } catch (IOException e) {
             System.out.println("Error exporting messages to CSV: " + e.getMessage());
         }

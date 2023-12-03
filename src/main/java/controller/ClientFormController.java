@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -96,6 +97,12 @@ public class ClientFormController {
     private ComboBox<String> statusFriends;
     @FXML
     private ComboBox<String> statusDM;
+
+    /* Backup */
+    @FXML
+    private Button createBackup;
+    @FXML
+    private ListView<String> backUpList;
 
 
     /**
@@ -265,6 +272,18 @@ public class ClientFormController {
                 scrollPane.setVvalue((Double) newValue));
         this.vBoxDM.heightProperty().addListener((observableValue, oldValue, newValue) ->
                 scrollPane.setVvalue((Double) newValue));
+
+        // Create Backup
+        createBackup.setOnAction(event -> {
+            // Get the current date and time and format it to a string
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String filename = "backup_" + timestamp + ".csv";
+
+            onLimeDB.exportMessagesToCSV(filename);
+
+            // Add the filename to the backUpList
+            backUpList.getItems().add(filename);
+        });
 
     }
 
