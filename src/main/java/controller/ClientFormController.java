@@ -21,15 +21,16 @@ import javafx.scene.text.TextFlow;
 import server.Server;
 import utils.UserListCell;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class ClientFormController {
@@ -95,6 +96,14 @@ public class ClientFormController {
     @FXML
     private ComboBox<String> statusDM;
 
+    /* Backup */
+    @FXML
+    private Button createBackup;
+    @FXML
+    private Button restoreBackup;
+    @FXML
+    private ListView<String> backUpList;
+
 
     /**
      * Initializes the client controller, establishes a connection to the server, and sets up the user interface.
@@ -103,6 +112,24 @@ public class ClientFormController {
         onLimeDB = new OnLimeDB();
         // Load friends list
         loadFriendsList();
+
+        // Create a Timer object
+        Timer timer = new Timer();
+
+        // Create a TimerTask object
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                // Call the method to update the usersList
+                Platform.runLater(() -> {
+                    updateUsersList();
+                    System.out.println("Updated usersList at: " + LocalTime.now());
+                });
+            }
+        };
+
+        // Schedule the task to run every 3 seconds
+        timer.scheduleAtFixedRate(task, 0, 3000);
 
         // Add a listener to the loggedInUsers list in the server
         try {
@@ -122,19 +149,27 @@ public class ClientFormController {
         // Load broadcast messages
         List<Message> broadcastMessages = onLimeDB.getAllBroadcastMessages();
         for (Message message : broadcastMessages) {
+            // Get the sender's username
+            String senderUsername = onLimeDB.getUsernameById(message.getSenderId());
+
+            // Senders username
+            Label usernameLabel = new Label(senderUsername + ": ");
+            usernameLabel.setStyle("-fx-font-weight: bold");
+
+            // Create the message label without bold style
             Label messageLabel = new Label(message.getText());
-            vBoxBroadcast.getChildren().add(messageLabel);
+
+            // Create a HBox to hold the username and message labels
+            HBox hboxMessage = new HBox(usernameLabel, messageLabel);
 
             Button deleteButton = new Button("Delete");
-            HBox hbox = new HBox(messageLabel, deleteButton);
+            HBox hboxDelete = new HBox(hboxMessage, deleteButton);
             deleteButton.setOnAction(event -> {
-                vBoxBroadcast.getChildren().remove(hbox);
-
-                // Delete the message from the database
+                vBoxBroadcast.getChildren().remove(hboxDelete);
                 onLimeDB.deleteBroadcastMessage(message.getMessageId());
             });
 
-            vBoxBroadcast.getChildren().add(hbox);
+            vBoxBroadcast.getChildren().add(hboxDelete);
         }
 
         List<Message> friendsMessages = onLimeDB.getAllFriendsMessages();
@@ -246,6 +281,27 @@ public class ClientFormController {
                 scrollPane.setVvalue((Double) newValue));
         this.vBoxDM.heightProperty().addListener((observableValue, oldValue, newValue) ->
                 scrollPane.setVvalue((Double) newValue));
+
+        // Create Backup
+        createBackup.setOnAction(event -> {
+            // Get the current date and time and format it to a string
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String filename = "backup_" + timestamp + ".csv";
+
+            onLimeDB.exportMessagesToCSV(filename);
+
+            // Add the filename to the backUpList
+            backUpList.getItems().add(filename);
+        });
+
+        // Restore Backup
+        restoreBackup.setOnAction(event -> {
+            // Get the selected backup file from the backUpList
+            String selectedBackup = backUpList.getSelectionModel().getSelectedItem();
+            if (selectedBackup != null) {
+                onLimeDB.restoreMessagesFromCSV(selectedBackup);
+            }
+        });
 
     }
 
@@ -439,7 +495,7 @@ public class ClientFormController {
         String senderName = parts[0];
         String msgFromServer = parts.length > 1 ? parts[1] : "";
         if (msgFromServer == null) {
-            msgFromServer = "";  // set to empty string or some default value
+            msgFromServer = "";
         }
 
         // Create a new HBox for the message
@@ -447,9 +503,22 @@ public class ClientFormController {
         hBox.setAlignment(Pos.CENTER_LEFT);
         hBox.setPadding(new Insets(5, 5, 5, 10));
 
+        Button deleteButton = new Button("Delete");
+        deleteButton.setOnAction(event -> {
+            // Remove the message from the VBox
+            vBox.getChildren().remove(hBox);
+
+            // Delete the message from the database
+            onLimeDB.deleteBroadcastMessage(messageId);
+        });
+
+        // Add the delete button to the HBox
+        hBox.getChildren().add(deleteButton);
+
         HBox hBoxName = new HBox();
         hBoxName.setAlignment(Pos.CENTER_LEFT);
         Text textName = new Text(senderName);
+        textName.setStyle("-fx-font-weight: bold");
         TextFlow textFlowName = new TextFlow(textName);
         hBoxName.getChildren().add(textFlowName);
 
